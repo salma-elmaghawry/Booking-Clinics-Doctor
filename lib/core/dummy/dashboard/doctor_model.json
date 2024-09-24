@@ -1,0 +1,15 @@
+{
+    "id": 0,
+    "name": "doctor name",
+    "gender": "male, female",
+    "specialist": "doctor specialist",
+    "profile_image": "image link url",
+    "clinics": {
+        "id": 0,
+        "location": "eyes center, mansoura",
+        "lat": 3.22222,
+        "lng": 1.23423
+    },
+    "rate": 4.7,
+    "reviews": 405
+}
