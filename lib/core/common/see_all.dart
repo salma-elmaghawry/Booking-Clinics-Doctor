@@ -1,7 +1,7 @@
-import 'package:booking_clinics/core/constant/const_string.dart';
+import 'package:booking_clinics_doctor/core/constant/const_string.dart';
+import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
-import 'package:booking_clinics/core/constant/extension.dart';
 
 class ListHeader extends StatelessWidget {
   final String title;

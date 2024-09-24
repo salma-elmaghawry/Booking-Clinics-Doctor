@@ -1,5 +1,6 @@
-import 'package:booking_clinics/core/common/input.dart';
-import 'package:booking_clinics/core/constant/extension.dart';
+
+import 'package:booking_clinics_doctor/core/common/input.dart';
+import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -23,8 +24,8 @@ class _SigninFormState extends State<SigninForm> {
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> formState = GlobalKey();
 
-  bool _isLoading = false;
-  final FirebaseAuthService _authService = FirebaseAuthService();
+    bool _isLoading = false;
+    final FirebaseAuthService _authService = FirebaseAuthService();
 
   @override
   Widget build(BuildContext context) {

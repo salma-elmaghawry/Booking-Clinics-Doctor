@@ -1,4 +1,4 @@
-import 'package:booking_clinics/core/constant/extension.dart';
+import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';

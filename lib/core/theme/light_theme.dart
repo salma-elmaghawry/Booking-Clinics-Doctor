@@ -1,8 +1,9 @@
+import 'package:booking_clinics_doctor/core/constant/const_color.dart';
+
 import 'text_theme.dart';
 import 'custom_borders.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
-import 'package:booking_clinics/core/constant/const_color.dart';
 
 ThemeData lightTheme() {
   return ThemeData(
