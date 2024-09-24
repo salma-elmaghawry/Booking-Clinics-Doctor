@@ -62,6 +62,12 @@ class Input extends StatelessWidget {
                 child: Icon(prefix, size: 21.sp),
               )
             : null,
+        suffixIcon: suffix != null
+            ? Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: suffix,
+              )
+            : null,
       ),
     );
   }

@@ -1,4 +1,3 @@
-
 import 'package:booking_clinics_doctor/core/constant/const_string.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,8 +21,10 @@ class _SignupFormState extends State<SignupForm> {
   TextEditingController emailController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  final TextEditingController specialityController = TextEditingController();
   GlobalKey<FormState> formState = GlobalKey();
 
+  String? selectedSpeciality;
   bool _isLoading = false;
   final FirebaseAuthService _authService = FirebaseAuthService();
 
@@ -33,24 +34,58 @@ class _SignupFormState extends State<SignupForm> {
       key: formState,
       child: Column(
         children: [
+          // Name
           Input(
             hint: "Your Name",
             prefix: Iconsax.user,
             controller: nameController,
           ),
           SizedBox(height: 1.5.h),
+          // Speciality
+          Input(
+            hint: "Select Speciality",
+            controller: specialityController,
+            prefix: Iconsax.hospital,
+            readOnly: true,
+            suffix: DropdownButton<String>(
+              value: selectedSpeciality,
+              hint: const Text("Speciality"),
+              onChanged: (String? newValue) {
+                selectedSpeciality = newValue;
+                specialityController.text = selectedSpeciality!;
+              },
+              items: [
+                "Dentistry",
+                "Cardiologist",
+                "Dermatology",
+                "Pediatrics",
+                "Orthopedics",
+                "Neurology",
+                "Psychiatry",
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value, style: context.regular14),
+                );
+              }).toList(),
+            ),
+          ),
+          SizedBox(height: 1.5.h),
+          // Email
           Input(
             hint: "Your Email",
             prefix: Iconsax.sms,
             controller: emailController,
           ),
           SizedBox(height: 1.5.h),
+          // Password
           Input(
             hint: "Password",
             prefix: Iconsax.lock,
             controller: passwordController,
           ),
           SizedBox(height: 3.h),
+
           _isLoading
               ? const CircularProgressIndicator()
               : CustomElevatedButton(

@@ -1,4 +1,3 @@
-
 import 'package:booking_clinics_doctor/core/common/input.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -48,7 +47,7 @@ class _SigninFormState extends State<SigninForm> {
           _isLoading
               ? const CircularProgressIndicator()
               : CustomElevatedButton(
-                  title: "Create Account",
+                  title: "Login",
                   onPressed: _signIn,
                 ),
         ],

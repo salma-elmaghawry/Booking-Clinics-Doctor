@@ -1,6 +1,7 @@
-import 'package:booking_clinics_doctor/core/constant/const_color.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../../../core/constant/const_color.dart';
 
 class CustomCongAuthDialog extends StatelessWidget {
   const CustomCongAuthDialog({super.key});

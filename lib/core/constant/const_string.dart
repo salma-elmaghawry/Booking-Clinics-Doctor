@@ -9,11 +9,9 @@ class Routes {
   static const forgetPassword = "/forgetPassword";
   static const editYourProfile = "/editYourProfile";
   static const doctorDetailsRoute = "/doctorDetailsRoute";
-  static const bookAppointmentRoute = "/bookAppointmentRoute";
   static const userBookingsRoute = "/userBookingsRoute";
   static const profileScreenRoute = "/profileScreenRoute";
   static const seeAll = "/seeAll";
-  static const favoriteView = "/favoriteView";
 }
 
 class ConstString {
