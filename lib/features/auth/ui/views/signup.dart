@@ -1,7 +1,8 @@
-import 'package:booking_clinics/core/constant/const_color.dart';
-import 'package:booking_clinics/core/constant/extension.dart';
-import 'package:booking_clinics/feature/Auth/Ui/widgets/socilal_button.dart';
-import 'package:booking_clinics/feature/auth/ui/widgets/logo_header.dart';
+
+import 'package:booking_clinics_doctor/core/constant/const_color.dart';
+import 'package:booking_clinics_doctor/core/constant/extension.dart';
+import 'package:booking_clinics_doctor/features/auth/ui/widgets/logo_header.dart';
+import 'package:booking_clinics_doctor/features/auth/ui/widgets/socilal_button.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../widgets/or_divider.dart';

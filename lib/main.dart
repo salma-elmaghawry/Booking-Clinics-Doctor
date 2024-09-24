@@ -1,3 +1,5 @@
+import 'package:booking_clinics_doctor/core/constant/const_string.dart';
+import 'package:booking_clinics_doctor/core/helper/routes.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,12 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home:Scaffold(
-      appBar: AppBar(
-        title: Text("Doctor app version"),
-      ),
-    
-    ) ,
+      debugShowCheckedModeBanner: false,
+        initialRoute:  Routes.onboarding,
+            onGenerateRoute: AppRouter.generateRoute,
+      
     );
     
   }

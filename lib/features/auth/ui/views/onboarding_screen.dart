@@ -1,8 +1,8 @@
-import 'package:booking_clinics/core/constant/const_color.dart';
-import 'package:booking_clinics/core/constant/extension.dart';
+import 'package:booking_clinics_doctor/core/constant/const_color.dart';
+import 'package:booking_clinics_doctor/core/constant/extension.dart';
+import 'package:booking_clinics_doctor/features/auth/ui/widgets/carousel_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
-import '../../../home/ui/widget/carousel/carousel_indicator.dart';
 import '../../data/onboarding_content.dart';
 import 'signin.dart';
 

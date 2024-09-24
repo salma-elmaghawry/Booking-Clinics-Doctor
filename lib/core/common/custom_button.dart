@@ -1,4 +1,4 @@
-import 'package:booking_clinics/core/constant/extension.dart';
+import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../constant/const_color.dart';
