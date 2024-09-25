@@ -1,13 +1,12 @@
 import 'package:booking_clinics_doctor/core/common/input.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
+import 'package:booking_clinics_doctor/data/models/doctor_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../core/constant/const_string.dart';
-import '../../../../data/models/patient.dart';
 import '../../../../data/services/local/shared_pref_storage.dart';
-import '../../../../data/services/remote/firebase_firestore.dart';
 import '../../data/auth_services.dart';
 import 'custom_elevated_button.dart';
 
@@ -23,7 +22,7 @@ class _SigninFormState extends State<SigninForm> {
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> formState = GlobalKey();
 
-    bool _isLoading = false;
+  bool _isLoading = false;
   final AuthenticationServices _authServices = AuthenticationServices();
 
   @override
@@ -64,13 +63,12 @@ class _SigninFormState extends State<SigninForm> {
         passwordController.text.trim(),
         context,
       );
+      setState(() => _isLoading = false);
 
       if (user != null && user.emailVerified) {
-        Patient? patient = await FirebaseFirestoreService().getPatientById(user.uid);
-        if (patient != null) {
-          await SharedPrefServices().savePatient(patient);
-
-          setState(() => _isLoading = false);
+        DoctorModel? doctor = await _authServices.getDoctorById(context, user.uid);
+        if (doctor != null) {
+          await SharedPrefServices().saveDoctor(doctor);
           context.nav.pushNamedAndRemoveUntil(Routes.navRoute, (route) => false);
         }
       } else {

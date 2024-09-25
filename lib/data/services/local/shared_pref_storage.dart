@@ -1,32 +1,26 @@
 import 'dart:convert';
+import 'package:booking_clinics_doctor/data/models/doctor_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../models/patient.dart';
 
 class SharedPrefServices {
-  static const String _patientKey = 'patient_data';
+  static const String _doctorKey = 'doctor_data';
 
   // Save Patient object
-  Future<void> savePatient(Patient patient) async {
+  Future<void> saveDoctor(DoctorModel doctor) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String patientJson = jsonEncode(patient.toJson());
-    await prefs.setString(_patientKey, patientJson);
+    String patientJson = jsonEncode(doctor.toJson());
+    await prefs.setString(_doctorKey, patientJson);
   }
 
   // Get Patient object
-  Future<Patient?> getPatient() async {
+  Future<DoctorModel?> getDoctor() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? patientJson = prefs.getString(_patientKey);
+    String? doctorJson = prefs.getString(_doctorKey);
 
-    if (patientJson != null) {
-      Map<String, dynamic> patientMap = jsonDecode(patientJson);
-      return Patient.fromJson(patientMap);
+    if (doctorJson != null) {
+      Map<String, dynamic> patientMap = jsonDecode(doctorJson);
+      return DoctorModel.fromJson(patientMap);
     }
     return null;
-  }
-
-  // Clear patient data
-  Future<void> clearPatientData() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_patientKey);
   }
 }

@@ -82,10 +82,13 @@ class AuthenticationServices {
 
       if (user != null) {
         if (user.emailVerified) {
+
+
           await _saveUid(user.uid);
           await _setLoginStatus(true);
           return user;
         }
+
         else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -139,5 +142,34 @@ class AuthenticationServices {
   Future<bool> isLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool('isLoggedIn') ?? false;
+  }
+
+  /// Fetches a doctor by ID from the doctors collection.
+  Future<DoctorModel?> getDoctorById(BuildContext context, String doctorId) async {
+    try {
+      final docSnapshot = await _firestore.collection("doctors").doc(doctorId).get();
+
+      if (docSnapshot.exists) {
+        return DoctorModel.fromJson(docSnapshot.data() as Map<String, dynamic>);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("This Email isn't registered as a doctor!"),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching doctor by ID: $e');
+      // Optionally show snackbar on error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error fetching doctor: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      rethrow;
+    }
   }
 }
