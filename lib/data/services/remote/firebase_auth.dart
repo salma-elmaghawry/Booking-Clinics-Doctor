@@ -5,25 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Sign Up with Email and Password
-  Future<User?> signUpWithEmailAndPassword(String email, String password) async {
-    try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      User? user = userCredential.user;
-
-      if (user != null) {
-        // Send email verification
-        await user.sendEmailVerification();
-      }
-      return user;
-    } catch (e) {
-      return null;
-    }
-  }
-
   // Login with Email and Password
   Future<User?> loginWithEmailAndPassword(String email, String password, BuildContext context) async {
     try {
@@ -31,12 +12,11 @@ class FirebaseAuthService {
         email: email,
         password: password,
       );
-      // Save UID in shared pref
       User? user = userCredential.user;
 
       if (user != null) {
         if (user.emailVerified) {
-          await _saveUid(user.uid); // Save UID and login status in SharedPref
+          await _saveUid(user.uid);
           await _setLoginStatus(true);
           return user;
         }
@@ -51,7 +31,6 @@ class FirebaseAuthService {
         }
       }
     } catch (e) {
-      print(e.toString());
       return null;
     }
     return null;
@@ -62,7 +41,7 @@ class FirebaseAuthService {
     try {
       await _auth.sendPasswordResetEmail(email: email);
     } catch (e) {
-      print(e.toString());
+      return;
     }
   }
 

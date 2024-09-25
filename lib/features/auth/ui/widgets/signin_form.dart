@@ -1,14 +1,13 @@
 import 'package:booking_clinics_doctor/core/common/input.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
+import 'package:booking_clinics_doctor/data/models/doctor_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../core/constant/const_string.dart';
-import '../../../../data/models/patient.dart';
 import '../../../../data/services/local/shared_pref_storage.dart';
-import '../../../../data/services/remote/firebase_auth.dart';
-import '../../../../data/services/remote/firebase_firestore.dart';
+import '../../data/auth_services.dart';
 import 'custom_elevated_button.dart';
 
 class SigninForm extends StatefulWidget {
@@ -23,8 +22,8 @@ class _SigninFormState extends State<SigninForm> {
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> formState = GlobalKey();
 
-    bool _isLoading = false;
-    final FirebaseAuthService _authService = FirebaseAuthService();
+  bool _isLoading = false;
+  final AuthenticationServices _authServices = AuthenticationServices();
 
   @override
   Widget build(BuildContext context) {
@@ -59,22 +58,21 @@ class _SigninFormState extends State<SigninForm> {
     if (formState.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      User? user = await _authService.loginWithEmailAndPassword(
+      User? user = await _authServices.loginWithEmailAndPassword(
         emailController.text.trim(),
         passwordController.text.trim(),
         context,
       );
-
       setState(() => _isLoading = false);
+
       if (user != null && user.emailVerified) {
-        // fetch patient object from firestore
-        Patient? patient = await FirebaseFirestoreService().getPatientById(user.uid);
-        if (patient != null) {
-          // save patient object in SharedPreference
-          await SharedPrefServices().savePatient(patient);
+        DoctorModel? doctor = await _authServices.getDoctorById(context, user.uid);
+        if (doctor != null) {
+          await SharedPrefServices().saveDoctor(doctor);
           context.nav.pushNamedAndRemoveUntil(Routes.navRoute, (route) => false);
         }
       } else {
+        setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Email or Password is incorrect'),

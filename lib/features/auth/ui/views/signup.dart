@@ -1,10 +1,8 @@
 import 'package:booking_clinics_doctor/core/constant/const_color.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:booking_clinics_doctor/features/auth/ui/widgets/logo_header.dart';
-import 'package:booking_clinics_doctor/features/auth/ui/widgets/socilal_button.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
-import '../widgets/or_divider.dart';
 import '../widgets/signup_form.dart';
 
 class SignUp extends StatelessWidget {
@@ -13,8 +11,9 @@ class SignUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Form(
+      body: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Center(
           child: ListView(
             shrinkWrap: true,
             padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
@@ -37,16 +36,6 @@ class SignUp extends StatelessWidget {
               // Form
               const SignupForm(),
               SizedBox(height: 2.h),
-              const OrDivider(),
-              SizedBox(height: 2.h),
-              const SocialButton(
-                  iconUrl: "assets/icons/Google - Original.svg",
-                  title: "Continue with Google"),
-              SizedBox(height: 1.h),
-              const SocialButton(
-                  iconUrl: "assets/icons/_Facebook.svg",
-                  title: "Continue with Facebook"),
-              SizedBox(height: 2.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -56,10 +45,8 @@ class SignUp extends StatelessWidget {
                       color: ConstColor.icon.color,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      context.nav.pop();
-                    },
+                  TextButton(
+                    onPressed: ()=>context.nav.pop(),
                     child: Text(
                       "Sign In",
                       style: context.medium14?.copyWith(
