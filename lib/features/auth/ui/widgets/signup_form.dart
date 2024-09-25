@@ -1,13 +1,12 @@
 import 'package:booking_clinics_doctor/core/constant/const_string.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
+import 'package:booking_clinics_doctor/data/models/doctor_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../core/common/input.dart';
-import '../../../../data/models/patient.dart';
-import '../../../../data/services/remote/firebase_auth.dart';
-import '../../../../data/services/remote/firebase_firestore.dart';
+import '../../data/auth_services.dart';
 import 'custom_elevated_button.dart';
 
 class SignupForm extends StatefulWidget {
@@ -26,7 +25,9 @@ class _SignupFormState extends State<SignupForm> {
 
   String? selectedSpeciality;
   bool _isLoading = false;
-  final FirebaseAuthService _authService = FirebaseAuthService();
+  final AuthenticationServices _authServices = AuthenticationServices();
+  bool _locationObtained = false;
+  final Map<String, dynamic> location = {};
 
   @override
   Widget build(BuildContext context) {
@@ -84,55 +85,104 @@ class _SignupFormState extends State<SignupForm> {
             prefix: Iconsax.lock,
             controller: passwordController,
           ),
+          SizedBox(height: 1.h),
+
+          // Location Section
+          Row(
+            children: [
+              _locationObtained
+                  ? const Icon(Icons.check_circle, color: Colors.green)
+                  : const Icon(Icons.location_on, color: Colors.red),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  _locationObtained ? 'Location Obtained' : 'Get Location',
+                  style: context.regular14,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.my_location),
+                onPressed: _getLocation,
+              ),
+            ],
+          ),
           SizedBox(height: 3.h),
 
           _isLoading
               ? const CircularProgressIndicator()
               : CustomElevatedButton(
                   title: "Create Account",
-                  onPressed: _signUp,
+                  onPressed: _locationObtained == true
+                      ? _signUp
+                      : () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Please get your location first"),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        },
                 ),
         ],
       ),
     );
   }
-
-  void _signUp() async {
+  Future<void> _signUp() async {
     if (formState.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      User? user = await _authService.signUpWithEmailAndPassword(
+      User? user = await _authServices.signUpWithEmailAndPassword(
         emailController.text.trim(),
         passwordController.text.trim(),
       );
 
-      setState(() => _isLoading = false);
-
+      var speciality = specialityController.text.trim();
       if (user != null) {
-        // Create a new Patient object
-        Patient newPatient = Patient(
-          uid: user.uid,
+        DoctorModel newDoctor = DoctorModel(
+          id: user.uid,
           name: nameController.text.trim(),
+          speciality: speciality.isEmpty ? 'Dentistry' : speciality,
           email: emailController.text.trim(),
-          phone: '',
-          birthDate: '',
-          profileImg: '',
+          location: location,
           bookings: [],
-          favorites: [],
+          reviews: [],
         );
+        await _authServices.addDoctorFireStore(newDoctor);
+        setState(() => _isLoading = false);
 
-        // Save the patient object to Firestore
-        FirebaseFirestoreService firestoreService = FirebaseFirestoreService();
-        await firestoreService.addPatient(newPatient);
-
-        context.nav.pushNamedAndRemoveUntil(Routes.signin, (route) => false);
-      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Sign Up Failed. Please try again.____'),
+            content: Text('Verify your email'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        context.nav.pushNamedAndRemoveUntil(Routes.signin, (route) => false);
+      } else {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sign Up Failed. Please try again.'),
+            backgroundColor: Colors.red,
           ),
         );
       }
+    }
+  }
+
+  Future<void> _getLocation() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final userLocation = await _authServices.getUserLocation();
+      setState(() {
+        location['lat'] = userLocation['latitude'];
+        location['lng'] = userLocation['longitude'];
+        _locationObtained = true;
+      });
+    } catch (error) {
+      return Future.error(error);
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 }
