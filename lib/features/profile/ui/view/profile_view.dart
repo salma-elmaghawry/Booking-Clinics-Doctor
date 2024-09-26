@@ -4,7 +4,7 @@ import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/common/custom_network_img.dart';
 import '../../../../core/helper/logout_btn_sheet.dart';
-import '../../../auth/ui/views/edit_your_profile.dart';
+import 'edit_your_profile.dart';
 import '../profile_manager/profile_cubit.dart';
 import '../widget/custom_expansion.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
