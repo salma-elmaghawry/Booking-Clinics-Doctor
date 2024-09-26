@@ -1,11 +1,12 @@
 import 'dart:io';
+import 'package:booking_clinics_doctor/data/models/doctor_model.dart';
 import 'package:path/path.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:booking_clinics_doctor/data/models/patient.dart';
 import 'package:booking_clinics_doctor/data/services/remote/firebase_auth.dart';
+import '../../../auth/data/auth_services.dart';
 
 part 'profile_state.dart';
 
@@ -14,18 +15,20 @@ class ProfileCubit extends Cubit<ProfileState> {
   String? downLoadUrl;
   final FirebaseAuthService _service;
   ProfileCubit(this._service) : super(ProfileInitial());
+  final AuthenticationServices _authServices = AuthenticationServices();
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // ! get user data from firestore
   Future<void> getUserData() async {
     emit(ProfileLoading());
     try {
-      final String? uid = await _service.getUid();
-      final DocumentSnapshot doc =
-          await _firestore.collection('patients').doc(uid).get();
+      final String? uid = await _authServices.getUid();
+      debugPrint("$uid _______________");
+      final DocumentSnapshot doc = await _firestore.collection('doctors').doc(uid).get();
+      debugPrint("$doc _______________doc");
       if (doc.exists) {
         final data = doc.data() as Map<String, dynamic>;
-        emit(ProfileSuccess(Patient.fromJson(data)));
+        emit(ProfileSuccess(DoctorModel.fromJson(data)));
       } else {
         emit(const ProfileFailure('User not found'));
       }

@@ -5,14 +5,11 @@ import 'package:booking_clinics_doctor/features/auth/ui/views/signin.dart';
 import 'package:booking_clinics_doctor/features/auth/ui/views/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../data/services/remote/firebase_firestore.dart';
-import '../../features/auth/ui/views/edit_your_profile.dart';
 import '../../features/auth/ui/views/forget_password.dart';
 import '../../features/booking/cubit/doc_details_cubit.dart';
 import '../../features/booking/ui/view/doctor_details.dart';
 import '../../features/home/ui/view/nav_view.dart';
-import '../../features/profile/ui/profile_manager/profile_cubit.dart';
 import '../../features/see_all/data/see_all_repo_impl.dart';
 import '../../features/see_all/ui/manager/see_all_cubit.dart';
 import '../../features/see_all/ui/view/see_all_view.dart';
@@ -45,13 +42,6 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const OnBoarding());
       case Routes.forgetPassword:
         return MaterialPageRoute(builder: (_) => const ForgetPassword());
-      case Routes.editYourProfile:
-        return MaterialPageRoute(
-          builder: (context) => BlocProvider<ProfileCubit>.value(
-            value: context.read<ProfileCubit>(),
-            child: const EditYourProfile(),
-          ),
-        );
       case Routes.seeAll:
         return MaterialPageRoute(
           builder: (_) => BlocProvider<SeeAllCubit>(

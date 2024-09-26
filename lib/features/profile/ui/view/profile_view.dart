@@ -2,11 +2,11 @@ import 'package:booking_clinics_doctor/features/profile/ui/image_manager/pick_im
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/common/custom_network_img.dart';
 import '../../../../core/helper/logout_btn_sheet.dart';
 import '../../../auth/ui/views/edit_your_profile.dart';
 import '../profile_manager/profile_cubit.dart';
 import '../widget/custom_expansion.dart';
-import '../../../../core/common/profile_image.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:booking_clinics_doctor/core/constant/const_color.dart';
 
@@ -15,9 +15,8 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: const Alignment(0, 0.25),
-      child: SingleChildScrollView(
+    return Scaffold(
+      body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
         child: BlocConsumer<ProfileCubit, ProfileState>(
           listener: (_, state) {
@@ -27,28 +26,43 @@ class ProfileView extends StatelessWidget {
             if (state is ProfileSuccess) {
               return Column(
                 children: [
-                  SizedBox(height: 2.h),
-                  Text("Profile", style: context.semi20),
                   SizedBox(height: 4.h),
-                  ProfileImage(
-                    image: state.model.profileImg.isEmpty
-                        ? null
-                        : NetworkImage(state.model.profileImg),
-                    onTap: () async {
-                      await navToEditPage(context);
-                    },
+                  Text("Profile", style: context.semi20),
+                  SizedBox(height: 8.h),
+                  Stack(
+                    children: [
+                      CustomNetworkImage(
+                        imageUrl: state.model.imageUrl,
+                        height: 16.h,
+                        width: 16.h,
+                      ),
+                      Positioned(
+                        right: 0,
+                        bottom: 1.w,
+                        child: Container(
+                          height: 4.h,
+                          width: 4.h,
+                          decoration: BoxDecoration(
+                            color: ConstColor.main.color,
+                            borderRadius: BorderRadius.circular(3.w),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () async {
+                              await navToEditPage(context, state.model.email);
+                            },
+                            color: Colors.white,
+                            iconSize: 5.w,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 2.h),
                   Text(state.model.name, style: context.bold16),
                   SizedBox(height: 0.5.h),
-                  Text(
-                    state.model.phone,
-                    style: context.regular14?.copyWith(
-                      color: ConstColor.icon.color,
-                    ),
-                  ),
+                  Text(state.model.email, style: context.medium16),
                   SizedBox(height: 4.h),
-
                   // List of settings
                   const CustomExpansionList(),
                   // Log Out
@@ -63,7 +77,8 @@ class ProfileView extends StatelessWidget {
                     },
                     title: Text(
                       "Log Out",
-                      style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w400),
+                      style: TextStyle(
+                          fontSize: 15.sp, fontWeight: FontWeight.w400),
                     ),
                     leading: const Icon(Icons.logout_outlined),
                     contentPadding: EdgeInsets.symmetric(horizontal: 2.w),
@@ -89,7 +104,7 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  Future<dynamic> navToEditPage(BuildContext context) async {
+  Future<dynamic> navToEditPage(BuildContext context, String email) async {
     return await Navigator.push(
       context,
       MaterialPageRoute(
@@ -103,7 +118,7 @@ class ProfileView extends StatelessWidget {
                 create: (_) => PickImageCubit(),
               ),
             ],
-            child: const EditYourProfile(),
+            child: EditYourProfile(email: email),
           );
         },
       ),

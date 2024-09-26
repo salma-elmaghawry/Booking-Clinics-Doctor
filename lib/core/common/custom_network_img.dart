@@ -15,8 +15,8 @@ class CustomNetworkImage extends StatelessWidget {
     required this.height,
     required this.width,
     this.fit = BoxFit.cover,
-    this.fallbackAsset = MyImages.boyAvatar,
-    this.borderRadius = 50,
+    this.fallbackAsset = MyImages.doctorAvatar,
+    this.borderRadius = 100,
   });
 
   @override
@@ -41,7 +41,7 @@ class CustomNetworkImage extends StatelessWidget {
             fallbackAsset,
             height: height,
             width: width,
-            fit: BoxFit.contain,
+            fit: BoxFit.cover,
           );
         },
       ),

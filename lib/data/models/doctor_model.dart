@@ -38,7 +38,7 @@ final class DoctorModel {
       location: Map<String, dynamic>.from(json['location']),
       patientsNumber: json['patientsNumber'],
       experience: json['experience'],
-      rating: json['rating'].toDouble(),
+      rating: json['rating']?.toDouble() ?? 0.0,
       imageUrl: json['imageUrl'],
       workingHours: json['workingHours'],
       address: json['address'],

@@ -4,14 +4,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../../../core/common/input.dart';
 import '../../../../core/common/profile_image.dart';
 import '../../../profile/ui/image_manager/pick_image_cubit.dart';
 import '../../../profile/ui/profile_manager/profile_cubit.dart';
 
 class EditYourProfile extends StatefulWidget {
-  const EditYourProfile({super.key});
+  const EditYourProfile({super.key, this.email});
+
+  final String? email;
 
   @override
   State<EditYourProfile> createState() => _EditYourProfileState();
@@ -103,7 +104,7 @@ class _EditYourProfileState extends State<EditYourProfile> {
               Input(
                 enabled: false,
                 prefix: Iconsax.sms,
-                hint: "mail@example.com",
+                hint: widget.email,
                 controller: emailController,
               ),
               SizedBox(height: 1.5.h),
