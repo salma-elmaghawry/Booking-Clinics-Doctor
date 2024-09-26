@@ -25,11 +25,9 @@ class AppRouter {
             final args = settings.arguments as Map<String, dynamic>;
             return BlocProvider<DoctorCubit>(
               create: (_) => DoctorCubit(getIt.get<FirebaseFirestoreService>())
-                ..fetchFavorites(args["patientName"])
                 ..fetchDoctorById(args["doctorId"]),
               child: DoctorDetailsView(
                 doctorId: args['doctorId'],
-                patientName: args['patientName'],
               ),
             );
           },

@@ -122,16 +122,17 @@ class _EditYourProfileState extends State<EditYourProfile> {
                 hint: "Full Name",
                 prefix: Iconsax.user,
                 controller: _nameController,
+                keyboardType: TextInputType.name,
               ),
               SizedBox(height: 1.5.h),
               Input(
                 hint: "Phone Number",
                 prefix: Iconsax.mobile,
                 controller: _phoneController,
+                keyboardType: TextInputType.phone,
               ),
               SizedBox(height: 1.5.h),
               Input(
-                //hint: "Date of Birth",
                 hint: "Working hours",
                 prefix: Iconsax.clock,
                 controller: _workingHoursController,
@@ -147,6 +148,7 @@ class _EditYourProfileState extends State<EditYourProfile> {
                 hint: "Experience Years",
                 prefix: Icons.work_history_outlined,
                 controller: _experienceController,
+                keyboardType: TextInputType.number,
               ),
               SizedBox(height: 1.5.h),
               // Speciality
@@ -270,6 +272,9 @@ class _EditYourProfileState extends State<EditYourProfile> {
     }
     if (_workingHoursController.text.trim().isNotEmpty) {
       data["workingHours"] = _workingHoursController.text.trim();
+    }
+    if (_experienceController.text.trim().isNotEmpty) {
+      data["experience"] = _experienceController.text.trim();
     }
     if (_specialityController.text.trim().isNotEmpty) {
       data["speciality"] = _specialityController.text.trim();
