@@ -1,6 +1,5 @@
 import 'package:booking_clinics_doctor/core/constant/const_color.dart';
 import 'package:booking_clinics_doctor/core/helper/service_locator.dart';
-import 'package:booking_clinics_doctor/data/services/remote/firebase_auth.dart';
 import 'package:booking_clinics_doctor/features/map/data/repo/location_repo/location_repo_imp.dart';
 import 'package:booking_clinics_doctor/features/map/data/repo/map_repo/map_impl.dart';
 import 'package:booking_clinics_doctor/features/map/data/repo/routes_repo/routes_impl.dart';
@@ -44,11 +43,9 @@ class _NavViewState extends State<NavView> {
     ),
 
     const AppointmentView(),
-    
+
     BlocProvider<ProfileCubit>(
-      create: (_) => ProfileCubit(
-        getIt.get<FirebaseAuthService>(),
-      )..getUserData(),
+      create: (_) => ProfileCubit()..getUserData(),
       child: const ProfileView(),
     ),
   ];

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import '../../../../core/common/custom_network_img.dart';
 import '../../../../core/constant/images_path.dart';
-import '../../../../data/services/remote/firebase_auth.dart';
 
 class SeeAllTab extends StatelessWidget {
   final List<DoctorModel> doctors;
@@ -24,7 +23,6 @@ class SeeAllTab extends StatelessWidget {
               Routes.doctorDetailsRoute,
               arguments: {
                 'doctorId': doctors[index].id,
-                'patientName': await FirebaseAuthService().getUid(),
               },
             );
           },

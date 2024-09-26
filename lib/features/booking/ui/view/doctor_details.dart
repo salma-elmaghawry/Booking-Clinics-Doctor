@@ -11,13 +11,8 @@ import '../widgets/rounded_doctor_card.dart';
 
 class DoctorDetailsView extends StatelessWidget {
   final String doctorId;
-  final String patientName;
 
-  const DoctorDetailsView({
-    super.key,
-    required this.doctorId,
-    required this.patientName,
-  });
+  const DoctorDetailsView({super.key, required this.doctorId});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +20,7 @@ class DoctorDetailsView extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Doctor Details'),
         leading: BackButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-          ),
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.transparent),
         ),
       ),
       body: BlocBuilder<DoctorCubit, DoctorState>(
@@ -55,8 +48,7 @@ class DoctorDetailsView extends StatelessWidget {
                 ),
                 SizedBox(height: 2.h),
                 // About me
-                const SectionHeading(
-                    title: 'About me', showActionButton: false),
+                const SectionHeading(title: 'About me', showActionButton: false),
                 SizedBox(height: 1.h),
                 Text(
                   doctor.about ?? "No information provided.",
@@ -67,8 +59,7 @@ class DoctorDetailsView extends StatelessWidget {
                 SizedBox(height: 2.h),
 
                 // Working Time
-                const SectionHeading(
-                    title: 'Working Time', showActionButton: false),
+                const SectionHeading(title: 'Working Time', showActionButton: false),
                 SizedBox(height: 1.h),
                 Text(
                   doctor.workingHours ?? "Not available",
