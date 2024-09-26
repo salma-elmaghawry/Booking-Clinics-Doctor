@@ -4,14 +4,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../../../core/common/input.dart';
 import '../../../../core/common/profile_image.dart';
-import '../../../profile/ui/image_manager/pick_image_cubit.dart';
-import '../../../profile/ui/profile_manager/profile_cubit.dart';
+import '../image_manager/pick_image_cubit.dart';
+import '../profile_manager/profile_cubit.dart';
 
 class EditYourProfile extends StatefulWidget {
-  const EditYourProfile({super.key});
+  const EditYourProfile({super.key, this.email});
+
+  final String? email;
 
   @override
   State<EditYourProfile> createState() => _EditYourProfileState();
@@ -21,8 +22,14 @@ class _EditYourProfileState extends State<EditYourProfile> {
   late TextEditingController _nameController;
   late TextEditingController emailController;
   late TextEditingController _phoneController;
-  late TextEditingController _birthController;
+  late TextEditingController _workingHoursController;
+  late TextEditingController _addressController;
+  late TextEditingController _aboutController;
+  late TextEditingController _experienceController;
+  late TextEditingController _specialityController;
   late GlobalKey<FormState> _formState;
+
+  String? selectedSpeciality;
 
   @override
   void initState() {
@@ -31,7 +38,11 @@ class _EditYourProfileState extends State<EditYourProfile> {
     _nameController = TextEditingController();
     emailController = TextEditingController();
     _phoneController = TextEditingController();
-    _birthController = TextEditingController();
+    _workingHoursController = TextEditingController();
+    _addressController = TextEditingController();
+    _aboutController = TextEditingController();
+    _experienceController = TextEditingController();
+    _specialityController = TextEditingController();
     _formState = GlobalKey<FormState>();
   }
 
@@ -41,7 +52,7 @@ class _EditYourProfileState extends State<EditYourProfile> {
     _nameController.dispose();
     emailController.dispose();
     _phoneController.dispose();
-    _birthController.dispose();
+    _workingHoursController.dispose();
     _formState.currentState?.dispose();
   }
 
@@ -99,11 +110,11 @@ class _EditYourProfileState extends State<EditYourProfile> {
                   ),
                 ],
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: 4.h),
               Input(
                 enabled: false,
                 prefix: Iconsax.sms,
-                hint: "mail@example.com",
+                hint: widget.email,
                 controller: emailController,
               ),
               SizedBox(height: 1.5.h),
@@ -120,11 +131,62 @@ class _EditYourProfileState extends State<EditYourProfile> {
               ),
               SizedBox(height: 1.5.h),
               Input(
-                hint: "Date of Birth",
-                prefix: Iconsax.calendar,
-                controller: _birthController,
+                //hint: "Date of Birth",
+                hint: "Working hours",
+                prefix: Iconsax.clock,
+                controller: _workingHoursController,
+              ),
+              SizedBox(height: 1.5.h),
+              Input(
+                hint: "About",
+                prefix: Iconsax.message_text_14,
+                controller: _aboutController,
+              ),
+              SizedBox(height: 1.5.h),
+              Input(
+                hint: "Experience Years",
+                prefix: Icons.work_history_outlined,
+                controller: _experienceController,
+              ),
+              SizedBox(height: 1.5.h),
+              // Speciality
+              Input(
+                hint: "Select Speciality",
+                controller: _specialityController,
+                prefix: Iconsax.hospital,
+                readOnly: true,
+                suffix: DropdownButton<String>(
+                  value: selectedSpeciality,
+                  hint: const Text("Speciality"),
+                  onChanged: (String? newValue) {
+                    selectedSpeciality = newValue;
+                    _specialityController.text = selectedSpeciality!;
+                  },
+                  items: [
+                    "Dentistry",
+                    "Cardiologist",
+                    "Dermatology",
+                    "Pediatrics",
+                    "Orthopedics",
+                    "Neurology",
+                    "Psychiatry",
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value, style: context.regular14),
+                    );
+                  }).toList(),
+                ),
+              ),
+              SizedBox(height: 1.5.h),
+              // address
+              Input(
+                hint: "Address",
+                prefix: Iconsax.home_1,
+                controller: _addressController,
               ),
               SizedBox(height: 4.h),
+
               BlocListener<ProfileCubit, ProfileState>(
                 listener: (context, state) {
                   if (state is UpdateProfileSuccess) {
@@ -200,18 +262,31 @@ class _EditYourProfileState extends State<EditYourProfile> {
     if (_phoneController.text.trim().isNotEmpty) {
       data["phone"] = _phoneController.text.trim();
     }
-    if (_birthController.text.trim().isNotEmpty) {
-      data["birth_date"] = _birthController.text.trim();
+    if (_aboutController.text.trim().isNotEmpty) {
+      data["about"] = _aboutController.text.trim();
+    }
+    if (_addressController.text.trim().isNotEmpty) {
+      data["address"] = _addressController.text.trim();
+    }
+    if (_workingHoursController.text.trim().isNotEmpty) {
+      data["workingHours"] = _workingHoursController.text.trim();
+    }
+    if (_specialityController.text.trim().isNotEmpty) {
+      data["speciality"] = _specialityController.text.trim();
     }
     if (cubit.downLoadUrl != null) {
-      data["profile_image"] = cubit.downLoadUrl;
+      data["imageUrl"] = cubit.downLoadUrl;
     }
     if (data.isEmpty && cubit.image == null) return;
     await cubit.updateUserData(data);
     if (cubit.state is UpdateProfileSuccess) {
       _nameController.clear();
       _phoneController.clear();
-      _birthController.clear();
+      _workingHoursController.clear();
+      _addressController.clear();
+      _aboutController.clear();
+      _experienceController.clear();
+      _specialityController.clear();
       await cubit.getUserData();
     }
   }
