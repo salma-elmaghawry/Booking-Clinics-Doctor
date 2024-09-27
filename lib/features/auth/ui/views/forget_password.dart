@@ -4,7 +4,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
 import '../../../../core/common/input.dart';
 import '../../../../core/constant/const_color.dart';
-import '../../../../data/services/remote/firebase_auth.dart';
+import '../../data/auth_services.dart';
 import '../widgets/custom_elevated_button.dart';
 import '../widgets/logo_header.dart';
 
@@ -20,7 +20,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isLoading = false;
-  final FirebaseAuthService _authService = FirebaseAuthService();
+  final AuthenticationServices _authService = AuthenticationServices();
 
   @override
   Widget build(BuildContext context) {
