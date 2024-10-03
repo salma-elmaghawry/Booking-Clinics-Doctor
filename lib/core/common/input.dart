@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class Input extends StatelessWidget {
   const Input({
+    this.maxLines,
     this.label,
     this.suffix,
     this.prefix,
@@ -21,6 +22,7 @@ class Input extends StatelessWidget {
     super.key,
   });
 
+  final int? maxLines;
   final bool? readOnly;
   final bool? enabled;
   final bool? isDense;
@@ -51,6 +53,7 @@ class Input extends StatelessWidget {
       keyboardType: keyboardType,
       obscureText: obscureText ?? false,
       enabled: enabled,
+      maxLines: maxLines,
       decoration: InputDecoration(
         hintText: hint,
         label: label != null ? Text(label!) : null,
