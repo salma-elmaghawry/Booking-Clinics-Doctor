@@ -11,7 +11,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
-import '../../../appointment/ui/appointment_view.dart';
+import '../../../../data/services/remote/firebase_auth.dart';
+import '../../../appointment/manager/appointment_cubit.dart';
+import '../../../appointment/view/appointment_view.dart';
 import '../../../profile/ui/profile_manager/profile_cubit.dart';
 import '../../../see_all/ui/manager/see_all_cubit.dart';
 import '../../../see_all/ui/view/see_all_view.dart';
@@ -42,7 +44,10 @@ class _NavViewState extends State<NavView> {
       child: const MapView(),
     ),
 
-    const AppointmentView(),
+    BlocProvider<AppointmentCubit>(
+      create: (_) => AppointmentCubit(getIt.get<FirebaseAuthService>()),
+      child: const AppointmentView(),
+    ),
 
     BlocProvider<ProfileCubit>(
       create: (_) => ProfileCubit()..getUserData(),

@@ -21,6 +21,7 @@ class ConstString {
   // ! _____ Firebase Queries & Params _____ ! //
   static const userCont = "USER_CONTAINER_NAME";
   static const doctorsCollection = "doctors";
+  static const patientsCollection = "patients";
 
   // ! _____ Texts _____ ! //
   static const aboutMeFakeText =

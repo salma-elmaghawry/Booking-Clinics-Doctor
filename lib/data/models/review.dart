@@ -1,16 +1,16 @@
-class Review {
+class ReviewModel {
   final String name, imageUrl, content;
   final double rating;
 
-  const Review({
+  const ReviewModel({
     required this.name,
     required this.imageUrl,
     required this.content,
     required this.rating,
   });
 
-  factory Review.fromJson(Map<String, dynamic> json) {
-    return Review(
+  factory ReviewModel.fromJson(Map<String, dynamic> json) {
+    return ReviewModel(
       name: json['name'],
       imageUrl: json['imageUrl'],
       content: json['content'],
