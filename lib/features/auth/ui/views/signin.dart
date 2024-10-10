@@ -12,61 +12,58 @@ class SignIn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: ListView(
-          shrinkWrap: true,
-          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-          children: [
-            const LogoHeader(),
-            Text(
-              "Hi, Welcome Back! ",
-              textAlign: TextAlign.center,
-              style: context.semi20,
-            ),
-            SizedBox(height: 1.h),
-            Text(
-              "Hope you’re doing fine.",
-              textAlign: TextAlign.center,
-              style: context.regular14?.copyWith(
-                color: ConstColor.icon.color,
+      body: SafeArea(
+        child: Align(
+          alignment: const Alignment(0, -.5),
+          child: ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+            children: [
+              const LogoHeader(),
+              Text(
+                "Hi, Welcome Back!",
+                textAlign: TextAlign.center,
+                style: context.semi20,
               ),
-            ),
-            SizedBox(height: 4.h),
-
-            const SigninForm(),
-
-            SizedBox(height: 2.h),
-            TextButton(
-              onPressed: () => context.nav.pushNamed(Routes.forgetPassword),
-              child: const Text("Forgot password?"),
-            ),
-            SizedBox(height: 1.h),
-            // Don’t have an account yet
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Don’t have an account yet?",
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: ConstColor.icon.color,
-                  ),
+              SizedBox(height: 0.5.h),
+              Text(
+                "Hope you’re doing fine",
+                textAlign: TextAlign.center,
+                style: context.regular14?.copyWith(
+                  color: ConstColor.icon.color,
                 ),
-                TextButton(
-                  onPressed: () => context.nav.pushNamed(Routes.signup),
-                  child: Text(
-                    " Sign up",
+              ),
+              SizedBox(height: 8.h),
+
+              const SigninForm(),
+
+              // Don’t have an account yet
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account yet?",
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w500,
-                      color: ConstColor.blue.color,
+                      color: ConstColor.icon.color,
                     ),
                   ),
-                ),
-              ],
-            )
-          ],
+                  TextButton(
+                    onPressed: () => context.nav.pushNamed(Routes.signup),
+                    child: Text(
+                      "Sign up",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: ConstColor.primary.color,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

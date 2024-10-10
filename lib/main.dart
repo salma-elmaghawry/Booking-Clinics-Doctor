@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:sizer/sizer.dart';
 
 import 'core/helper/observer.dart';
@@ -25,16 +24,12 @@ Future<void> main() async {
   );
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   setupServiceLocator();
-  await Hive.initFlutter();
   Bloc.observer = Observer();
   // ! _____ Prevent Device Orientation _____ ! //
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  // ! _____ Open Hive Boxes Here below... for Example _____ ! //
-  await Hive.openBox<Map<dynamic, dynamic>>(ConstString.userAuthBox);
-
   bool isUserLoggedIn = await FirebaseAuthService().isLoggedIn();
   // ! _____
   FlutterNativeSplash.remove();

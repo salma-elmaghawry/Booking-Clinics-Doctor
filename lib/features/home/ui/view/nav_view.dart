@@ -1,22 +1,20 @@
-import 'package:booking_clinics_doctor/core/constant/const_color.dart';
-import 'package:booking_clinics_doctor/core/helper/service_locator.dart';
-import 'package:booking_clinics_doctor/features/map/data/repo/location_repo/location_repo_imp.dart';
-import 'package:booking_clinics_doctor/features/map/data/repo/map_repo/map_impl.dart';
-import 'package:booking_clinics_doctor/features/map/data/repo/routes_repo/routes_impl.dart';
-import 'package:booking_clinics_doctor/features/map/ui/manager/map_cubit.dart';
-import 'package:booking_clinics_doctor/features/map/ui/view/map_view.dart';
-import 'package:booking_clinics_doctor/features/profile/ui/view/profile_view.dart';
-import 'package:booking_clinics_doctor/features/see_all/data/see_all_repo_impl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/constant/const_color.dart';
+import '../../../../core/helper/service_locator.dart';
 import '../../../../data/services/remote/firebase_auth.dart';
 import '../../../appointment/manager/appointment_cubit.dart';
 import '../../../appointment/view/appointment_view.dart';
+import '../../../map/data/repo/location_repo/location_repo_imp.dart';
+import '../../../map/data/repo/map_repo/map_impl.dart';
+import '../../../map/data/repo/routes_repo/routes_impl.dart';
+import '../../../map/ui/manager/map_cubit.dart';
+import '../../../map/ui/view/map_view.dart';
 import '../../../profile/ui/profile_manager/profile_cubit.dart';
-import '../../../see_all/ui/manager/see_all_cubit.dart';
-import '../../../see_all/ui/view/see_all_view.dart';
+import '../../../profile/ui/view/profile_view.dart';
+import 'home_view.dart';
 
 class NavView extends StatefulWidget {
   const NavView({super.key});
@@ -28,13 +26,12 @@ class NavView extends StatefulWidget {
 class _NavViewState extends State<NavView> {
   int _index = 0;
   static final List<Widget> _pages = [
-    BlocProvider<SeeAllCubit>(
-      create: (_) => SeeAllCubit(
-        getIt.get<SeeAllRepoImpl>(),
-      )..invokeAllDoctors(),
-      child: const SeeAllView(),
+    BlocProvider<AppointmentCubit>(
+      create: (_) => AppointmentCubit(
+        getIt.get<FirebaseAuthService>(),
+      )..fetchBookings(),
+      child: const HomeView(),
     ),
-    //SeeAllView(),
     BlocProvider(
       create: (_) => MapCubit(
         mapRepo: getIt.get<MapImpl>(),
@@ -43,14 +40,14 @@ class _NavViewState extends State<NavView> {
       )..predectPlaces(),
       child: const MapView(),
     ),
-
     BlocProvider<AppointmentCubit>(
       create: (_) => AppointmentCubit(getIt.get<FirebaseAuthService>()),
       child: const AppointmentView(),
     ),
-
     BlocProvider<ProfileCubit>(
-      create: (_) => ProfileCubit()..getUserData(),
+      create: (_) => ProfileCubit(
+        getIt.get<FirebaseAuthService>(),
+      )..getUserData(),
       child: const ProfileView(),
     ),
   ];
@@ -74,7 +71,10 @@ class _NavViewState extends State<NavView> {
       resizeToAvoidBottomInset: false,
       body: _pages[_index],
       bottomNavigationBar: ClipRRect(
-        borderRadius: BorderRadius.circular(4.w),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(4.w),
+          topRight: Radius.circular(4.w),
+        ),
         child: BottomAppBar(
           height: 7.5.h,
           child: Row(
@@ -87,8 +87,7 @@ class _NavViewState extends State<NavView> {
                   },
                   style: IconButton.styleFrom(
                     backgroundColor: _index == index &&
-                            MediaQuery.of(context).platformBrightness ==
-                                Brightness.dark
+                            Theme.of(context).brightness == Brightness.dark
                         ? ConstColor.primary.color
                         : _index == index
                             ? ConstColor.secondary.color
@@ -96,8 +95,7 @@ class _NavViewState extends State<NavView> {
                   ),
                   icon: Icon(
                     index == _index ? _iconsFill[index] : _icons[index],
-                    color: MediaQuery.of(context).platformBrightness ==
-                            Brightness.dark
+                    color: Theme.of(context).brightness == Brightness.dark
                         ? _index == index
                             ? ConstColor.dark.color
                             : ConstColor.secondary.color

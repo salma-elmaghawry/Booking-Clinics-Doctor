@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:booking_clinics_doctor/data/models/doctor_model.dart';
+import 'package:booking_clinics_doctor/data/services/remote/firebase_auth.dart';
 import 'package:path/path.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +13,7 @@ part 'profile_state.dart';
 class ProfileCubit extends Cubit<ProfileState> {
   File? image;
   String? downLoadUrl;
-  ProfileCubit() : super(ProfileInitial());
+  ProfileCubit(FirebaseAuthService firebaseAuthService) : super(ProfileInitial());
   final AuthenticationServices _authServices = AuthenticationServices();
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 

@@ -1,5 +1,8 @@
+import 'package:booking_clinics_doctor/core/common/dropdown.dart';
+import 'package:booking_clinics_doctor/core/constant/const_color.dart';
 import 'package:booking_clinics_doctor/core/constant/const_string.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
+import 'package:booking_clinics_doctor/core/helper/service_locator.dart';
 import 'package:booking_clinics_doctor/data/models/doctor_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,11 +26,20 @@ class _SignupFormState extends State<SignupForm> {
   final TextEditingController specialityController = TextEditingController();
   GlobalKey<FormState> formState = GlobalKey();
 
-  String? selectedSpeciality;
   bool _isLoading = false;
-  final AuthenticationServices _authServices = AuthenticationServices();
+  String? selectedSpeciality;
+  // final AuthenticationServices _authServices = AuthenticationServices();
   bool _locationObtained = false;
   final Map<String, dynamic> location = {};
+
+  @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    nameController.dispose();
+    passwordController.dispose();
+    specialityController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,78 +47,95 @@ class _SignupFormState extends State<SignupForm> {
       key: formState,
       child: Column(
         children: [
+          // specialty
+          Material(
+            color: ConstColor.iconDark.color,
+            borderRadius: BorderRadius.circular(3.5.w),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SizedBox(width: 4.w),
+                const Icon(Iconsax.sort),
+                Expanded(
+                  child: DropDown(
+                    isDense: false,
+                    isExpanded: true,
+                    titles: ConstString.specialties,
+                    onSelect: (val) {
+                      selectedSpeciality = ConstString.specialties[val ?? 0];
+                      specialityController.text = "$selectedSpeciality";
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 1.5.h),
           // Name
           Input(
-            hint: "Your Name",
+            hint: "Full Name",
             prefix: Iconsax.user,
             controller: nameController,
           ),
           SizedBox(height: 1.5.h),
-          // Speciality
-          Input(
-            hint: "Select Speciality",
-            controller: specialityController,
-            prefix: Iconsax.hospital,
-            readOnly: true,
-            suffix: DropdownButton<String>(
-              value: selectedSpeciality,
-              hint: const Text("Speciality"),
-              onChanged: (String? newValue) {
-                selectedSpeciality = newValue;
-                specialityController.text = selectedSpeciality!;
-              },
-              items: [
-                "Dentistry",
-                "Cardiologist",
-                "Dermatology",
-                "Pediatrics",
-                "Orthopedics",
-                "Neurology",
-                "Psychiatry",
-              ].map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value, style: context.regular14),
-                );
-              }).toList(),
-            ),
-          ),
-          SizedBox(height: 1.5.h),
           // Email
           Input(
-            hint: "Your Email",
+            hint: "Valid Email",
             prefix: Iconsax.sms,
             controller: emailController,
           ),
           SizedBox(height: 1.5.h),
           // Password
-          Input(
-            hint: "Password",
-            prefix: Iconsax.lock,
-            controller: passwordController,
-          ),
-          SizedBox(height: 1.h),
-
-          // Location Section
           Row(
             children: [
-              _locationObtained
-                  ? const Icon(Icons.check_circle, color: Colors.green)
-                  : const Icon(Icons.location_on, color: Colors.red),
-              const SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  _locationObtained ? 'Location Obtained' : 'Get Location',
-                  style: context.regular14,
+                child: Input(
+                  hint: "Password",
+                  controller: passwordController,
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.my_location),
-                onPressed: _getLocation,
+              SizedBox(width: 4.w),
+              Expanded(
+                child: Input(
+                  hint: "Confirm",
+                  controller: passwordController,
+                ),
               ),
             ],
           ),
-          SizedBox(height: 3.h),
+          SizedBox(height: 1.5.h),
+          // Location Section
+          Material(
+            color: ConstColor.iconDark.color,
+            borderRadius: BorderRadius.circular(3.5.w),
+            child: Padding(
+              padding: EdgeInsets.only(left: 4.w, right: 2.w),
+              child: Row(
+                children: [
+                  const Icon(Iconsax.location),
+                  SizedBox(width: 4.w),
+                  Text(
+                    _locationObtained
+                        ? 'Location Obtained'
+                        : 'Medical Center Location',
+                    style: context.regular14?.copyWith(
+                      color: ConstColor.icon.color,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: _getLocation,
+                    icon: Icon(
+                      Icons.my_location,
+                      color: ConstColor.primary.color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 4.h),
 
           _isLoading
               ? const CircularProgressIndicator()
@@ -116,9 +145,8 @@ class _SignupFormState extends State<SignupForm> {
                       ? _signUp
                       : () {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
+                            SnackBar(
                               content: Text("Please get your location first"),
-                              backgroundColor: Colors.red,
                             ),
                           );
                         },
@@ -127,14 +155,16 @@ class _SignupFormState extends State<SignupForm> {
       ),
     );
   }
+
   Future<void> _signUp() async {
     if (formState.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      User? user = await _authServices.signUpWithEmailAndPassword(
-        emailController.text.trim(),
-        passwordController.text.trim(),
-      );
+      User? user =
+          await getIt.get<AuthenticationServices>().signUpWithEmailAndPassword(
+                emailController.text.trim(),
+                passwordController.text.trim(),
+              );
 
       var speciality = specialityController.text.trim();
       if (user != null) {
@@ -147,22 +177,28 @@ class _SignupFormState extends State<SignupForm> {
           bookings: [],
           reviews: [],
         );
-        await _authServices.addDoctorFireStore(newDoctor);
+        await getIt.get<AuthenticationServices>().addDoctorFireStore(newDoctor);
         setState(() => _isLoading = false);
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Verify your email'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: Text(
+              'Verify your email',
+              style: context.regular14,
+            ),
+            backgroundColor: ConstColor.primary.color,
           ),
         );
         context.nav.pushNamedAndRemoveUntil(Routes.signin, (route) => false);
       } else {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Sign Up Failed. Please try again.'),
-            backgroundColor: Colors.red,
+          SnackBar(
+            content: Text(
+              'Sign Up Failed, Please Try Later.',
+              style: context.regular14,
+            ),
+            backgroundColor: ConstColor.primary.color,
           ),
         );
       }
@@ -171,9 +207,9 @@ class _SignupFormState extends State<SignupForm> {
 
   Future<void> _getLocation() async {
     setState(() => _isLoading = true);
-
     try {
-      final userLocation = await _authServices.getUserLocation();
+      final userLocation =
+          await getIt.get<AuthenticationServices>().getUserLocation();
       setState(() {
         location['lat'] = userLocation['latitude'];
         location['lng'] = userLocation['longitude'];

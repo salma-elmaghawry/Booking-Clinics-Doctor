@@ -15,8 +15,43 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   List<Booking> completed = [];
   final FirebaseAuthService _authService;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   AppointmentCubit(this._authService) : super(AppointmentLoading());
+
+  // ! The Chart in HomeView
+  Map<double, double> pendingCoord = {};
+  Map<double, double> canceledCoord = {};
+  Map<double, double> completedCoord = {};
+  void _coordinate(List<Booking> bookings) {
+    final Map<double, double> coordinates = {};
+    for (Booking booking in bookings) {
+      final date = _getDay(DateTime.parse(booking.date));
+      coordinates.update(date, (val) => val++, ifAbsent: () => 0);
+      pendingCoord.addEntries(coordinates.entries);
+    }
+    // print(pendingCoordinates.keys);
+    // print(pendingCoordinates.values);
+  }
+
+  static double _getDay(DateTime date) {
+    switch (date.weekday) {
+      case 7:
+        return 0;
+      case 1:
+        return 1;
+      case 2:
+        return 2;
+      case 3:
+        return 3;
+      case 4:
+        return 4;
+      case 5:
+        return 5;
+      case 6:
+        return 6;
+      default:
+        return -1;
+    }
+  }
 
   // ! Get bookings when open the page first time
   Future<void> fetchBookings() async {
@@ -134,12 +169,17 @@ class AppointmentCubit extends Cubit<AppointmentState> {
         pending.add(bookings[i]);
       } else if (bookings[i].bookingStatus == "Completed") {
         completed.add(bookings[i]);
+        // _coordinate(completed);
       } else if (bookings[i].bookingStatus == "Canceled") {
         canceled.add(bookings[i]);
+        // _coordinate(canceled);
       } else {
         debugPrint(bookings[i].bookingStatus);
       }
     }
+    _coordinate(pending);
+    // _coordinate(canceled);
+    // _coordinate(completed);
   }
 
   // ! Compine bookings before update it in firebase
