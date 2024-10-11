@@ -1,5 +1,5 @@
-import '../../../../map/data/model/location_model.dart';
-import '../../../../map/data/model/place_details_model/viewport.dart';
+import '../../../map/data/model/location_model.dart';
+import '../../../map/data/model/place_details_model/viewport.dart';
 
 class Geometry {
   LocationModel? location;

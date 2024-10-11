@@ -1,10 +1,15 @@
-import 'package:booking_clinics_doctor/core/constant/const_color.dart';
-import 'package:booking_clinics_doctor/features/home/ui/widget/custom_linear_chart.dart';
+import 'package:booking_clinics_doctor/features/profile/ui/profile_manager/profile_cubit.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/common/input.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
+
+import '../../../../core/constant/const_color.dart';
+import '../../../appointment/manager/appointment_cubit.dart';
+import '../widget/custom_bar_chart.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -20,17 +25,37 @@ class HomeView extends StatelessWidget {
       ),
       children: [
         ListTile(
-          title: Text("Hi Omar Ali,", style: context.semi16),
+          title: BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (_, state) {
+              if (state is ProfileSuccess) {
+                return Text("Hi ${state.model.name},", style: context.semi16);
+              }
+              return const SizedBox.shrink();
+            },
+          ),
           subtitle: Text(
             "Have a nice day at work",
             style: context.bold18?.copyWith(
               color: ConstColor.icon.color,
             ),
           ),
-          trailing: CircleAvatar(
-            radius: 8.w,
-            backgroundColor: ConstColor.textBtn.color,
-            child: const Icon(Iconsax.user),
+          trailing: BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (_, state) {
+              if (state is ProfileSuccess && state.model.imageUrl != null) {
+                return CircleAvatar(
+                  radius: 8.w,
+                  backgroundImage: CachedNetworkImageProvider(
+                    state.model.imageUrl!,
+                  ),
+                );
+              } else {
+                return CircleAvatar(
+                  radius: 8.w,
+                  backgroundColor: ConstColor.textBtn.color,
+                  child: const Icon(Iconsax.user, color: Colors.white),
+                );
+              }
+            },
           ),
         ),
         SizedBox(height: 3.h),
@@ -39,30 +64,34 @@ class HomeView extends StatelessWidget {
           prefix: Iconsax.search_normal,
           hint: "Search Appointment",
         ),
-        // SizedBox(height: 4.h),
-        // const CustomLineChart(),
-        Padding(
-          padding: EdgeInsets.only(top: 2.h),
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(
+        SizedBox(height: 4.h),
+        InkWell(
+          onLongPress: () {},
+          borderRadius: BorderRadius.circular(3.5.w),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
                   Iconsax.info_circle,
                   color: ConstColor.icon.color,
                 ),
-              ),
-              Text(
-                "Show Details",
-                style: context.regular14?.copyWith(
-                  color: ConstColor.icon.color,
+                SizedBox(width: 4.w),
+                Text(
+                  "Show Details",
+                  style: context.regular14?.copyWith(
+                    color: ConstColor.icon.color,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-        // const CustomBarChart(),
-        const CustomLineChart(),
+        CustomBarChart(
+          weeklyData: context.read<AppointmentCubit>().weeklyData,
+        ),
+        SizedBox(height: 4.h),
       ],
     );
   }

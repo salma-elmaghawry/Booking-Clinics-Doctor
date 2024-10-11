@@ -25,3 +25,4 @@ class MyColors {
   static const Color primary = Color(0xffA4CFC3);
   static const Color gray = Color(0xffE5E7EB);
 }
+

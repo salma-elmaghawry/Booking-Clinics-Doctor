@@ -26,10 +26,19 @@ class NavView extends StatefulWidget {
 class _NavViewState extends State<NavView> {
   int _index = 0;
   static final List<Widget> _pages = [
-    BlocProvider<AppointmentCubit>(
-      create: (_) => AppointmentCubit(
-        getIt.get<FirebaseAuthService>(),
-      )..fetchBookings(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<AppointmentCubit>(
+          create: (_) => AppointmentCubit(
+            getIt.get<FirebaseAuthService>(),
+          )..fetchBookings(),
+        ),
+        BlocProvider<ProfileCubit>(
+          create: (_) => ProfileCubit(
+            getIt.get<FirebaseAuthService>(),
+          )..getUserData(),
+        ),
+      ],
       child: const HomeView(),
     ),
     BlocProvider(
@@ -41,7 +50,9 @@ class _NavViewState extends State<NavView> {
       child: const MapView(),
     ),
     BlocProvider<AppointmentCubit>(
-      create: (_) => AppointmentCubit(getIt.get<FirebaseAuthService>()),
+      create: (_) => AppointmentCubit(
+        getIt.get<FirebaseAuthService>(),
+      )..fetchBookings(),
       child: const AppointmentView(),
     ),
     BlocProvider<ProfileCubit>(
@@ -69,7 +80,7 @@ class _NavViewState extends State<NavView> {
     return Scaffold(
       extendBody: _index == 1,
       resizeToAvoidBottomInset: false,
-      body: _pages[_index],
+      body: SafeArea(child: _pages[_index]),
       bottomNavigationBar: ClipRRect(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(4.w),

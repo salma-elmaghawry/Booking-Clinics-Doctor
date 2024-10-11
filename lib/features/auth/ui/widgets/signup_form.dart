@@ -145,7 +145,7 @@ class _SignupFormState extends State<SignupForm> {
                       ? _signUp
                       : () {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
+                            const SnackBar(
                               content: Text("Please get your location first"),
                             ),
                           );
