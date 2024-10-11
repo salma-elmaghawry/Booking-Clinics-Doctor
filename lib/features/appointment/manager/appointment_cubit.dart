@@ -38,65 +38,6 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     }
   }
 
-  // ! Cancel in pending
-  Future<void> cancelBooking({required int index}) async {
-    try {
-      emit(ActionClicked());
-      pending[index].bookingStatus = "Canceled";
-      // ! Update patient bookings
-      final doctorRef = await _doctorRef;
-      await doctorRef.update({
-        'bookings': List<dynamic>.from(
-          _compineBookings.map((booking) => booking.toJson()),
-        )
-      });
-      // ! Update doctor bookings
-      final patientRef = await _patientRef(pending[index].personId);
-      await patientRef.update({
-        'bookings': List<dynamic>.from(
-          _compineBookings.map((booking) => booking.toJson()),
-        )
-      });
-      debugPrint("Canceled Successfully!");
-      canceled.insert(0, pending[index]);
-      pending.removeAt(index);
-      emit(AppointmentSuccess());
-    } catch (e) {
-      debugPrint("$e");
-    }
-  }
-
-  // ! Reschedule in pending
-  Future<void> reschadule({
-    required String date,
-    required String time,
-  }) async {
-    try {
-      emit(ActionClicked());
-      if (index == null) return;
-      pending[index!].date = date;
-      pending[index!].time = time;
-      pending[index!].bookingStatus = "Pending";
-      // ! Update patient bookings
-      final ref = await _doctorRef;
-      await ref.update({
-        'bookings': List<dynamic>.from(
-          _compineBookings.map((booking) => booking.toJson()),
-        )
-      });
-      // ! Update doctor bookings
-      final patientRef = await _patientRef(pending[index!].personId);
-      await patientRef.update({
-        'bookings': List<dynamic>.from(
-          _compineBookings.map((booking) => booking.toJson()),
-        )
-      });
-      emit(AppointmentSuccess());
-    } catch (e) {
-      debugPrint("$e");
-    }
-  }
-
   // ! Update status for both user & doctor before filtering
   Future<void> _updateStatus(DoctorModel doctor) async {
     bool statusUpdated = false;
@@ -117,13 +58,6 @@ class AppointmentCubit extends Cubit<AppointmentState> {
       List<Map<String, dynamic>> bookings =
           doctor.bookings.map((e) => e.toJson()).toList();
       await ref.update({'bookings': bookings});
-      // ! Update doctor bookings
-      // final doctorRef = await _doctorRef(patient.bookings[index!].id);
-      // await doctorRef.update({
-      //   'bookings': List<dynamic>.from(
-      //     _compineBookings.map((booking) => booking.toJson()),
-      //   )
-      // });
       debugPrint('Pending bookings updated to Completed');
     }
   }

@@ -34,7 +34,6 @@ class ActionButtons extends StatelessWidget {
               padding: const EdgeInsets.all(12),
               textColor: MyColors.dark2,
               onTap: () {
-                final read = context.read<AppointmentCubit>();
                 showMsg(
                   context,
                   title: "Cancel",
@@ -49,7 +48,7 @@ class ActionButtons extends StatelessWidget {
                         : ConstColor.primary.color,
                   ),
                   onPressed: () async {
-                    await read.cancelBooking(index: read.index!);
+                    // await read.cancelBooking(index: read.index!);
                   },
                 );
                 context.read<AppointmentCubit>().index = bookingId;
