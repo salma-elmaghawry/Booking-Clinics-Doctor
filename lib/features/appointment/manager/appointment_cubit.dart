@@ -14,6 +14,7 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   List<Booking> pending = [];
   List<Booking> canceled = [];
   List<Booking> completed = [];
+  List<Booking> compined = [];
   final FirebaseAuthService _authService;
   WeeklyBookingData weeklyData = WeeklyBookingData();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -84,11 +85,27 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     }
   }
 
-  // ! Add Chart Coordinates in HomeView.
+  // ! Add Chart Coordinates in HomeView, [Weekly Bookings].
+  // void _coordinates(Booking booking) {
+  //   DateTime bookingDate = DateTime.parse(booking.date);
+  //   double dayOfWeek = _getDay(bookingDate);
+  //   weeklyData.updateBooking(dayOfWeek, booking.bookingStatus);
+  // }
   void _coordinates(Booking booking) {
+    DateTime now = DateTime.now();
     DateTime bookingDate = DateTime.parse(booking.date);
-    double dayOfWeek = _getDay(bookingDate);
-    weeklyData.updateBooking(dayOfWeek, booking.bookingStatus);
+
+    // * Calculate the start and end of the current week
+    DateTime startOfWeek =
+        now.subtract(Duration(days: now.weekday - 1)); // Monday
+    DateTime endOfWeek = startOfWeek.add(const Duration(days: 6)); // Sunday
+
+    // * Check if the booking date is within this week
+    if (bookingDate.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
+        bookingDate.isBefore(endOfWeek.add(const Duration(days: 1)))) {
+      double dayOfWeek = _getDay(bookingDate);
+      weeklyData.updateBooking(dayOfWeek, booking.bookingStatus);
+    }
   }
 
   // ! Filter bookings after get it from firebase and update it
@@ -107,6 +124,18 @@ class AppointmentCubit extends Cubit<AppointmentState> {
         debugPrint("Oops... Unable to Found ${bookings[i].bookingStatus}");
       }
     }
+    compined = _compineBookings;
+  }
+
+  // ! Get bookings for today
+  List<Booking> getTodayBookings() {
+    final DateTime today = DateTime.now();
+    return compined.where((booking) {
+      DateTime bookingDate = DateTime.parse(booking.date);
+      return bookingDate.year == today.year &&
+          bookingDate.month == today.month &&
+          bookingDate.day == today.day;
+    }).toList();
   }
 
   // ! Compine bookings before update it in firebase
@@ -127,7 +156,7 @@ class AppointmentCubit extends Cubit<AppointmentState> {
           .get();
 
   // ! (2)
-  Future<DocumentReference<Map<String, dynamic>>> _patientRef(
-          String patientId) async =>
-      _firestore.collection(ConstString.patientsCollection).doc(patientId);
+  // Future<DocumentReference<Map<String, dynamic>>> _patientRef(
+  //         String patientId) async =>
+  //     _firestore.collection(ConstString.patientsCollection).doc(patientId);
 }

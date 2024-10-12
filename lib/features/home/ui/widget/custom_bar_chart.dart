@@ -70,24 +70,24 @@ class CustomBarChart extends StatelessWidget {
     );
   }
 
-  Widget _getDayTitle(int index) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return Text(days[index],
-        style: const TextStyle(fontWeight: FontWeight.bold));
-  }
+  // Widget _getDayTitle(int index) {
+  //   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  //   return Text(days[index],
+  //       style: const TextStyle(fontWeight: FontWeight.bold));
+  // }
 
-  double _getMaxYValue() {
-    // ! Find the maximum value from all booking counts to set the y-axis limit
-    return weeklyData.days.values
-            .expand((dayMap) => [
-                  dayMap.pending,
-                  dayMap.completed,
-                  dayMap.canceled,
-                ])
-            .reduce((max, count) => count > max ? count : max)
-            .toDouble() +
-        2;
-  }
+  // double _getMaxYValue() {
+  //   // ! Find the maximum value from all booking counts to set the y-axis limit
+  //   return weeklyData.days.values
+  //           .expand((dayMap) => [
+  //                 dayMap.pending,
+  //                 dayMap.completed,
+  //                 dayMap.canceled,
+  //               ])
+  //           .reduce((max, count) => count > max ? count : max)
+  //           .toDouble() +
+  //       2;
+  // }
 
   List<BarChartGroupData> _createBarGroups(AppointmentState state) {
     const List<double> days = [0, 1, 2, 3, 4, 5, 6];
@@ -156,31 +156,4 @@ class CustomBarChart extends StatelessWidget {
       ),
     );
   }
-
-  final Gradient blueToPurpleGradient = const LinearGradient(
-    colors: [
-      Color(0xFF42A5F5), // Light Blue
-      Color(0xFF7B1FA2), // Deep Purple
-    ],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
-
-  final Gradient greenToTealGradient = const LinearGradient(
-    colors: [
-      Color(0xFF66BB6A), // Medium Green
-      Color(0xFF26A69A), // Teal
-    ],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
-
-  final Gradient orangeToRedGradient = const LinearGradient(
-    colors: [
-      Color(0xFFFFA726), // Orange
-      Color(0xFFEF5350), // Red
-    ],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
 }

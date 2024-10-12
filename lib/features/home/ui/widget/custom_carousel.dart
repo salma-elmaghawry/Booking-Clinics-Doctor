@@ -2,7 +2,6 @@ import 'package:booking_clinics_doctor/core/constant/const_color.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:booking_clinics_doctor/features/home/ui/manager/all_doctors/all_doctors_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../core/constant/const_string.dart';
 import 'list_item.dart';
 import 'package:sizer/sizer.dart';

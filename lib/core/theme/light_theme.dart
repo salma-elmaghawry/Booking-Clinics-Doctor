@@ -28,7 +28,7 @@ ThemeData lightTheme() {
       ),
       iconTheme: IconThemeData(
         size: 20.sp,
-        color: ConstColor.icon.color,
+        color: ConstColor.textBtn.color,
       ),
     ),
     // ! _____ TabBar _____ ! //
@@ -79,7 +79,7 @@ ThemeData lightTheme() {
     // ! _____ Icon _____ ! //
     iconTheme: IconThemeData(
       size: 20.sp,
-      color: ConstColor.dark.color,
+      color: ConstColor.textBtn.color,
     ),
     // ! _____ ElevatedButton _____ ! //
     elevatedButtonTheme: ElevatedButtonThemeData(

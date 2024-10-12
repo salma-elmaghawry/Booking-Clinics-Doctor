@@ -84,7 +84,7 @@ ThemeData darkTheme() {
     // ! _____ Icon _____ ! //
     iconTheme: IconThemeData(
       size: 20.sp,
-      color: ConstColor.secondary.color,
+      color: ConstColor.icon.color,
     ),
     // ! _____ ElevatedButton _____ ! //
     elevatedButtonTheme: ElevatedButtonThemeData(

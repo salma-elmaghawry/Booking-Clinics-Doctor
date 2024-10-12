@@ -1,3 +1,4 @@
+import 'package:booking_clinics_doctor/core/common/see_all.dart';
 import 'package:booking_clinics_doctor/features/profile/ui/profile_manager/profile_cubit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,10 +7,10 @@ import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/common/input.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
-
 import '../../../../core/constant/const_color.dart';
 import '../../../appointment/manager/appointment_cubit.dart';
 import '../widget/custom_bar_chart.dart';
+import '../widget/today_booking.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -28,7 +29,7 @@ class HomeView extends StatelessWidget {
           title: BlocBuilder<ProfileCubit, ProfileState>(
             builder: (_, state) {
               if (state is ProfileSuccess) {
-                return Text("Hi ${state.model.name},", style: context.semi16);
+                return Text("Hi, ${state.model.name}", style: context.semi16);
               }
               return const SizedBox.shrink();
             },
@@ -58,28 +59,34 @@ class HomeView extends StatelessWidget {
             },
           ),
         ),
-        SizedBox(height: 3.h),
+        SizedBox(height: 2.h),
         const Input(
           isDense: false,
           prefix: Iconsax.search_normal,
           hint: "Search Appointment",
         ),
         SizedBox(height: 4.h),
-        InkWell(
-          onLongPress: () {},
-          borderRadius: BorderRadius.circular(3.5.w),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+        Padding(
+          padding: EdgeInsets.only(
+            left: 2.w,
+            right: 2.w,
+            bottom: 4.h,
+          ),
+          child: GestureDetector(
+            onLongPress: () {},
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   Iconsax.info_circle,
-                  color: ConstColor.icon.color,
+                  color:
+                      context.mediaQuery.platformBrightness == Brightness.dark
+                          ? ConstColor.primary.color
+                          : ConstColor.icon.color,
                 ),
                 SizedBox(width: 4.w),
                 Text(
-                  "Show Details",
+                  "More Info",
                   style: context.regular14?.copyWith(
                     color: ConstColor.icon.color,
                   ),
@@ -92,6 +99,8 @@ class HomeView extends StatelessWidget {
           weeklyData: context.read<AppointmentCubit>().weeklyData,
         ),
         SizedBox(height: 4.h),
+        const ListHeader(title: "Today's Booking"),
+        const TodayBooking(),
       ],
     );
   }
