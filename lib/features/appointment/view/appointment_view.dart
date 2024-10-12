@@ -62,7 +62,7 @@ class _AppointmentViewState extends State<AppointmentView>
 
   @override
   void dispose() {
-    super.dispose();
     _tabController.dispose();
+    super.dispose();
   }
 }

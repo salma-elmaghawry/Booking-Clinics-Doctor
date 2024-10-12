@@ -72,7 +72,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
   void _resetPassword() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
-
       await getIt
           .get<AuthenticationServices>()
           .resetPassword(_emailController.text.trim())

@@ -44,24 +44,66 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     bool statusUpdated = false;
     DateTime currentDate = DateTime.now();
 
+    // * List to keep track of bookings to delete
+    List<Booking> bookingsToKeep = [];
+
     for (int i = 0; i < doctor.bookings.length; i++) {
-      if (doctor.bookings[i].bookingStatus == 'Pending') {
-        DateTime bookingDate = DateTime.parse(doctor.bookings[i].date);
-        if (bookingDate.isBefore(currentDate)) {
-          doctor.bookings[i].bookingStatus = 'Completed';
-          statusUpdated = true;
+      Booking booking = doctor.bookings[i];
+      DateTime bookingDate = DateTime.parse(booking.date);
+
+      // * Update Pending bookings to Completed if their date is in the past
+      if (booking.bookingStatus == 'Pending' &&
+          bookingDate.isBefore(currentDate)) {
+        booking.bookingStatus = 'Completed';
+        statusUpdated = true;
+      }
+
+      // * Keep bookings that are not Completed or Canceled more than a week ago
+      if (booking.bookingStatus == 'Completed' ||
+          booking.bookingStatus == 'Canceled') {
+        DateTime oneWeekAgo = currentDate.subtract(const Duration(days: 7));
+        if (bookingDate.isAfter(oneWeekAgo)) {
+          bookingsToKeep.add(booking); // * Keep bookings that are within a week
         }
+      } else {
+        // * Keep all other bookings
+        bookingsToKeep.add(booking);
       }
     }
-    if (statusUpdated) {
-      // ! Update doctor bookings
+
+    // * If any status was updated or bookings were removed, update Firestore
+    if (statusUpdated || bookingsToKeep.length != doctor.bookings.length) {
+      // * Update doctor bookings in Firestore
       final ref = await _doctorRef;
-      List<Map<String, dynamic>> bookings =
-          doctor.bookings.map((e) => e.toJson()).toList();
-      await ref.update({'bookings': bookings});
-      debugPrint('Pending bookings updated to Completed');
+      List<Map<String, dynamic>> updatedBookings =
+          bookingsToKeep.map((booking) => booking.toJson()).toList();
+      await ref.update({'bookings': updatedBookings});
+      debugPrint(
+          'Bookings updated: Pending to Completed, & old bookings deleted.');
     }
   }
+  // Future<void> _updateStatus(DoctorModel doctor) async {
+  //   bool statusUpdated = false;
+  //   DateTime currentDate = DateTime.now();
+
+  //   for (int i = 0; i < doctor.bookings.length; i++) {
+  //     if (doctor.bookings[i].bookingStatus == 'Pending') {
+  //       DateTime bookingDate = DateTime.parse(doctor.bookings[i].date);
+  //       if (bookingDate.isBefore(currentDate)) {
+  //         doctor.bookings[i].bookingStatus = 'Completed';
+  //         statusUpdated = true;
+  //       }
+  //     }
+  //   }
+  //   if (statusUpdated) {
+  //     // ! Update doctor bookings
+  //     final ref = await _doctorRef;
+  //     List<Map<String, dynamic>> bookings =
+  //         doctor.bookings.map((e) => e.toJson()).toList();
+  //     await ref.update({'bookings': bookings});
+  //     debugPrint('Pending bookings updated to Completed');
+  //   }
+  // }
 
   // ! Get Keys of Chart from Bookings Date.
   static double _getDay(DateTime date) {

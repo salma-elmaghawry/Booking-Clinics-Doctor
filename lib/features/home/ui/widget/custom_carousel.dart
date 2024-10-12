@@ -39,7 +39,12 @@ class CarouselSlider extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 4.w),
               children: List.generate(
                 images.length,
-                (index) => ListItem(doctor: state.doctors[index]),
+                (index) => ListItem(
+                  doctor: state.doctors[index],
+                  computeRoute: () {
+                    return ;
+                  },
+                ),
               ),
             );
           } else if (state is AllDoctorsFailure) {

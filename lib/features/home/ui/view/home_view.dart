@@ -1,4 +1,5 @@
 import 'package:booking_clinics_doctor/core/common/see_all.dart';
+import 'package:booking_clinics_doctor/core/common/skeleton.dart';
 import 'package:booking_clinics_doctor/features/profile/ui/profile_manager/profile_cubit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,7 +32,7 @@ class HomeView extends StatelessWidget {
               if (state is ProfileSuccess) {
                 return Text("Hi, ${state.model.name}", style: context.semi16);
               }
-              return const SizedBox.shrink();
+              return Skeleton(width: 5.w, height: 2.h);
             },
           ),
           subtitle: Text(
@@ -99,7 +100,7 @@ class HomeView extends StatelessWidget {
           weeklyData: context.read<AppointmentCubit>().weeklyData,
         ),
         SizedBox(height: 4.h),
-        const ListHeader(title: "Today's Booking"),
+        const ListHeader(title: "Today's Bookings"),
         const TodayBooking(),
       ],
     );

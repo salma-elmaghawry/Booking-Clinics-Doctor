@@ -1,4 +1,3 @@
-import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
@@ -8,6 +7,7 @@ import '../../cubit/doc_details_cubit.dart';
 import '../widgets/achievement_column.dart';
 import '../widgets/reviews_item.dart';
 import '../widgets/rounded_doctor_card.dart';
+import 'package:booking_clinics_doctor/core/constant/extension.dart';
 
 class DoctorDetailsView extends StatelessWidget {
   final String doctorId;
