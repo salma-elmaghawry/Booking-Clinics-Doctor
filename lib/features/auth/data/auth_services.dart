@@ -34,7 +34,8 @@ class AuthenticationServices {
     }
 
     // Get the current position (latitude & longitude)
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
 
     // Return the location as a map
     return {
@@ -43,9 +44,11 @@ class AuthenticationServices {
     };
   }
 
-  Future<User?> signUpWithEmailAndPassword(String email, String password) async {
+  Future<User?> signUpWithEmailAndPassword(
+      String email, String password) async {
     try {
-      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -72,7 +75,8 @@ class AuthenticationServices {
   }
 
   // Login with Email and Password
-  Future<User?> loginWithEmailAndPassword(String email, String password, BuildContext context) async {
+  Future<User?> loginWithEmailAndPassword(
+      String email, String password, BuildContext context) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -82,20 +86,18 @@ class AuthenticationServices {
 
       if (user != null) {
         if (user.emailVerified) {
-
-
           await _saveUid(user.uid);
           await _setLoginStatus(true);
           return user;
-        }
-
-        else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Please verify your email first'),
-              backgroundColor: Colors.red,
-            ),
-          );
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Please verify your email first'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
           return null;
         }
       }
@@ -145,30 +147,36 @@ class AuthenticationServices {
   }
 
   /// Fetches a doctor by ID from the doctors collection.
-  Future<DoctorModel?> getDoctorById(BuildContext context, String doctorId) async {
+  Future<DoctorModel?> getDoctorById(
+      BuildContext context, String doctorId) async {
     try {
-      final docSnapshot = await _firestore.collection("doctors").doc(doctorId).get();
+      final docSnapshot =
+          await _firestore.collection("doctors").doc(doctorId).get();
 
       if (docSnapshot.exists) {
         return DoctorModel.fromJson(docSnapshot.data() as Map<String, dynamic>);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("This Email isn't registered as a doctor!"),
-            backgroundColor: Colors.red,
-          ),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("This Email isn't registered as a doctor!"),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
         return null;
       }
     } catch (e) {
-      print('Error fetching doctor by ID: $e');
-      // Optionally show snackbar on error
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error fetching doctor: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      debugPrint('Error fetching doctor by ID: $e');
+      if (context.mounted) {
+        // Optionally show snackbar on error
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error fetching doctor: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
       rethrow;
     }
   }

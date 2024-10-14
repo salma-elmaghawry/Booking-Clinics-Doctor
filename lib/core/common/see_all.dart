@@ -1,6 +1,6 @@
+import 'package:booking_clinics_doctor/core/constant/const_color.dart';
 import 'package:booking_clinics_doctor/core/constant/const_string.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
-import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
 
 class ListHeader extends StatelessWidget {
@@ -9,20 +9,22 @@ class ListHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: 1.5.h, left: 4.w, right: 4.w),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: context.bold16),
-          TextButton(
-            onPressed: () {
-              context.nav.pushNamed(Routes.seeAll);
-            },
-            child: const Text("See All"),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: context.bold16?.copyWith(
+            color: ConstColor.icon.color,
           ),
-        ],
-      ),
+        ),
+        TextButton(
+          onPressed: () {
+            context.nav.pushNamed(Routes.seeAll);
+          },
+          child: const Text("See All"),
+        ),
+      ],
     );
   }
 }

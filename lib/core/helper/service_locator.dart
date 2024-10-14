@@ -4,6 +4,7 @@ import 'package:location/location.dart';
 import '../../data/services/local/local_storage.dart';
 import '../../data/services/remote/firebase_auth.dart';
 import '../../data/services/remote/firebase_firestore.dart';
+import '../../features/auth/data/auth_services.dart';
 import '../../features/home/data/repo/home_repo_impl.dart';
 import '../../features/map/data/repo/location_repo/location_repo_imp.dart';
 import '../../features/map/data/repo/map_repo/map_impl.dart';
@@ -29,6 +30,9 @@ void setupServiceLocator() {
   );
   getIt.registerLazySingleton<FirebaseAuthService>(
     () => FirebaseAuthService(),
+  );
+  getIt.registerLazySingleton<AuthenticationServices>(
+    () => AuthenticationServices(),
   );
   getIt.registerLazySingleton<FirebaseFirestoreService>(
     () => FirebaseFirestoreService(),

@@ -54,7 +54,9 @@ class _NavViewState extends State<NavView> {
     const ChatListScreen(),
     // Profile
     BlocProvider<ProfileCubit>(
-      create: (_) => ProfileCubit()..getUserData(),
+      create: (_) => ProfileCubit(
+        getIt.get<FirebaseAuthService>(),
+      )..getUserData(),
       child: const ProfileView(),
     ),
   ];

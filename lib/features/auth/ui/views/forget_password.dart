@@ -1,4 +1,5 @@
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
+import 'package:booking_clinics_doctor/core/helper/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
@@ -16,11 +17,15 @@ class ForgetPassword extends StatefulWidget {
 }
 
 class _ForgetPasswordState extends State<ForgetPassword> {
-  final _emailController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-
   bool _isLoading = false;
-  final AuthenticationServices _authService = AuthenticationServices();
+  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +42,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
               "Forget Password?",
               style: context.semi20,
             ),
-            SizedBox(height: 2.h),
+            SizedBox(height: 1.h),
             Text(
               "Enter your Email, we will send you a verification code.",
               style: context.regular14?.copyWith(
@@ -45,7 +50,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: 8.h),
             Input(
               hint: "Your Email",
               prefix: Iconsax.sms,
@@ -64,11 +69,11 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     );
   }
 
-  void _resetPassword() {
+  void _resetPassword() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
-
-      _authService
+      await getIt
+          .get<AuthenticationServices>()
           .resetPassword(_emailController.text.trim())
           .then((_) => context.nav.pop());
       setState(() => _isLoading = false);

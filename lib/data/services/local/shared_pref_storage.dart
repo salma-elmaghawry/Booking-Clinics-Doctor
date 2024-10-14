@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:booking_clinics_doctor/data/models/doctor_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:booking_clinics_doctor/data/models/doctor_model.dart';
 
 class SharedPrefServices {
   static const String _doctorKey = 'doctor_data';

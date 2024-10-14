@@ -11,9 +11,9 @@ class SignUp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Center(
+      body: SafeArea(
+        child: Align(
+          alignment: const Alignment(0, -0.5),
           child: ListView(
             shrinkWrap: true,
             padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
@@ -24,7 +24,7 @@ class SignUp extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: context.semi20,
               ),
-              SizedBox(height: 1.h),
+              SizedBox(height: 0.5.h),
               Text(
                 "We are here to help you",
                 textAlign: TextAlign.center,
@@ -32,25 +32,24 @@ class SignUp extends StatelessWidget {
                   color: ConstColor.icon.color,
                 ),
               ),
-              SizedBox(height: 3.h),
+              SizedBox(height: 4.h),
               // Form
               const SignupForm(),
-              SizedBox(height: 2.h),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Do you have an account ? ",
+                    "Register in Hagzy?",
                     style: context.medium14?.copyWith(
                       color: ConstColor.icon.color,
                     ),
                   ),
                   TextButton(
-                    onPressed: ()=>context.nav.pop(),
+                    onPressed: () => context.nav.pop(),
                     child: Text(
                       "Sign In",
                       style: context.medium14?.copyWith(
-                        color: ConstColor.blue.color,
+                        color: ConstColor.primary.color,
                       ),
                     ),
                   ),

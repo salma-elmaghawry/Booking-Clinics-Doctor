@@ -1,4 +1,6 @@
+import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
+import '../../../home/ui/widget/custom_search.dart';
 import '../widget/see_all_tab.dart';
 import '../manager/see_all_cubit.dart';
 import 'package:flutter/material.dart';
@@ -14,11 +16,12 @@ class SeeAllView extends StatefulWidget {
   State<SeeAllView> createState() => _SeeAllViewState();
 }
 
-class _SeeAllViewState extends State<SeeAllView> with TickerProviderStateMixin {
+class _SeeAllViewState extends State<SeeAllView>
+    with SingleTickerProviderStateMixin {
   late final TabController _tabController;
   static const List<String> _specialty = [
     "All",
-    "cardiologist",
+    "Cardiologist",
     "Dentistry",
     "Dermatology",
     "Pediatrics",
@@ -36,9 +39,7 @@ class _SeeAllViewState extends State<SeeAllView> with TickerProviderStateMixin {
       initialIndex: widget.firstIndex ?? 0,
     );
     _onChangeTap();
-    _tabController.addListener(() async {
-      await _onChangeTap();
-    });
+    // _tabController.addListener(() async => await _onChangeTap());
   }
 
   Future<void> _onChangeTap() async {
@@ -53,7 +54,7 @@ class _SeeAllViewState extends State<SeeAllView> with TickerProviderStateMixin {
   void dispose() {
     super.dispose();
     _tabController
-      ..removeListener(() {})
+      ..removeListener(_onChangeTap)
       ..dispose();
   }
 
@@ -63,16 +64,34 @@ class _SeeAllViewState extends State<SeeAllView> with TickerProviderStateMixin {
       length: _specialty.length,
       child: Scaffold(
         appBar: AppBar(
-          centerTitle: true,
+          centerTitle: false,
           toolbarHeight: 7.h,
           title: Text("All Doctors", style: context.bold18),
-          automaticallyImplyLeading: false,
+          leading: IconButton(
+            onPressed: () => context.nav.pop(),
+            icon: const Icon(Iconsax.arrow_left_2),
+          ),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(right: 4.w),
+              child: IconButton(
+                onPressed: () {
+                  showSearch(
+                    context: context,
+                    delegate: CustomSearch(),
+                  );
+                },
+                icon: const Icon(Iconsax.search_normal),
+              ),
+            ),
+          ],
           bottom: TabBar(
-            onTap: (val) {},
+            onTap: (val) async {
+              await _onChangeTap();
+            },
             isScrollable: true,
             controller: _tabController,
             tabAlignment: TabAlignment.start,
-            dividerColor: Colors.transparent,
             padding: EdgeInsets.only(left: 4.w, right: 4.w, bottom: 1.h),
             tabs: List.generate(
               _specialty.length,
@@ -85,11 +104,12 @@ class _SeeAllViewState extends State<SeeAllView> with TickerProviderStateMixin {
         ),
         body: TabBarView(
           controller: _tabController,
+          physics: const NeverScrollableScrollPhysics(),
           children: List.generate(
             _specialty.length,
             (index) {
               return BlocBuilder<SeeAllCubit, SeeAllState>(
-                builder: (context, state) {
+                builder: (_, state) {
                   if (state is SeeAllSuccess) {
                     if (state.doctors.isEmpty) {
                       return Center(
@@ -118,3 +138,64 @@ class _SeeAllViewState extends State<SeeAllView> with TickerProviderStateMixin {
   }
 }
 
+class DefaultTabControllerListener extends StatefulWidget {
+  const DefaultTabControllerListener({
+    super.key,
+    required this.child,
+    required this.onTabChanged,
+  });
+
+  final Widget child;
+  final ValueChanged<int> onTabChanged;
+
+  @override
+  State<DefaultTabControllerListener> createState() =>
+      _DefaultTabControllerListenerState();
+}
+
+class _DefaultTabControllerListenerState
+    extends State<DefaultTabControllerListener> {
+  TabController? _controller;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final TabController? defaultTabController =
+        DefaultTabController.maybeOf(context);
+
+    assert(() {
+      if (defaultTabController == null) {
+        throw FlutterError(
+          'No DefaultTabController for ${widget.runtimeType}.\n'
+          'When creating a ${widget.runtimeType}, you must ensure that there '
+          'is a DefaultTabController above the ${widget.runtimeType}.',
+        );
+      }
+      return true;
+    }());
+
+    if (defaultTabController != _controller) {
+      _controller?.removeListener(_listener);
+      _controller = defaultTabController;
+      _controller?.addListener(_listener);
+    }
+  }
+
+  void _listener() {
+    final TabController? controller = _controller;
+    if (controller == null || controller.indexIsChanging) return;
+    widget.onTabChanged(controller.index);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller?.removeListener(_listener);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}

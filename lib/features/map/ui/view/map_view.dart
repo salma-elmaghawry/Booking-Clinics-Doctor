@@ -34,7 +34,7 @@ class _MapViewState extends State<MapView> {
               style: style,
               markers: mapCubit.markers,
               onTap: (val) async {
-                await mapCubit.getDoctors();
+                // await mapCubit.getDoctors();
               },
               onMapCreated: (controller) async {
                 // style = await mapCubit.setupMapStyle(context);

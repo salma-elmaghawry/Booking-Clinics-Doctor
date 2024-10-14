@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
-
 import '../manager/appointment_cubit.dart';
 import '../widgets/booking_tab.dart';
 
@@ -21,12 +20,11 @@ class _AppointmentViewState extends State<AppointmentView>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    context.read<AppointmentCubit>().fetchBookings();
   }
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<AppointmentCubit>();
+    final read = context.read<AppointmentCubit>();
     return DefaultTabController(
       length: _status.length,
       child: Scaffold(
@@ -51,10 +49,10 @@ class _AppointmentViewState extends State<AppointmentView>
             (index) => BookingTab(
               status: _status[index],
               bookings: index == 0
-                  ? cubit.pending
+                  ? read.pending
                   : index == 1
-                      ? cubit.completed
-                      : cubit.canceled,
+                      ? read.completed
+                      : read.canceled,
             ),
           ),
         ),
@@ -64,7 +62,7 @@ class _AppointmentViewState extends State<AppointmentView>
 
   @override
   void dispose() {
-    super.dispose();
     _tabController.dispose();
+    super.dispose();
   }
 }
