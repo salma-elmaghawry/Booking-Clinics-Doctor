@@ -23,6 +23,7 @@ class SeeAllTab extends StatelessWidget {
               Routes.doctorDetailsRoute,
               arguments: {
                 'doctorId': doctors[index].id,
+                'doctorName': doctors[index].name,
               },
             );
           },
