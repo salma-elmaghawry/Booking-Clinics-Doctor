@@ -18,6 +18,7 @@ import '../../../appointment/view/appointment_view.dart';
 import '../../../profile/ui/profile_manager/profile_cubit.dart';
 import '../../../see_all/ui/manager/see_all_cubit.dart';
 import '../../../see_all/ui/view/see_all_view.dart';
+import 'home_view.dart';
 
 class NavView extends StatefulWidget {
   const NavView({super.key});
@@ -29,12 +30,20 @@ class NavView extends StatefulWidget {
 class _NavViewState extends State<NavView> {
   int _index = 0;
   static final List<Widget> _pages = [
-    // All Doctors
-    BlocProvider<SeeAllCubit>(
-      create: (_) => SeeAllCubit(
-        getIt.get<SeeAllRepoImpl>(),
-      )..invokeAllDoctors(),
-      child: const SeeAllView(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<AppointmentCubit>(
+          create: (_) => AppointmentCubit(
+            getIt.get<FirebaseAuthService>(),
+          )..fetchBookings(),
+        ),
+        BlocProvider<ProfileCubit>(
+          create: (_) => ProfileCubit(
+            getIt.get<FirebaseAuthService>(),
+          )..getUserData(),
+        ),
+      ],
+      child: const HomeView(),
     ),
     // Map
     BlocProvider(
@@ -80,9 +89,12 @@ class _NavViewState extends State<NavView> {
     return Scaffold(
       extendBody: _index == 1,
       resizeToAvoidBottomInset: false,
-      body: _pages[_index],
+      body: SafeArea(child: _pages[_index]),
       bottomNavigationBar: ClipRRect(
-        borderRadius: BorderRadius.circular(4.w),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(4.w),
+          topRight: Radius.circular(4.w),
+        ),
         child: BottomAppBar(
           height: 7.5.h,
           child: Row(
