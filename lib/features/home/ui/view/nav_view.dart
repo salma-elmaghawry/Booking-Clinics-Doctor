@@ -7,7 +7,6 @@ import 'package:booking_clinics_doctor/features/map/data/repo/routes_repo/routes
 import 'package:booking_clinics_doctor/features/map/ui/manager/map_cubit.dart';
 import 'package:booking_clinics_doctor/features/map/ui/view/map_view.dart';
 import 'package:booking_clinics_doctor/features/profile/ui/view/profile_view.dart';
-import 'package:booking_clinics_doctor/features/see_all/data/see_all_repo_impl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
@@ -16,8 +15,6 @@ import '../../../../data/services/remote/firebase_auth.dart';
 import '../../../appointment/manager/appointment_cubit.dart';
 import '../../../appointment/view/appointment_view.dart';
 import '../../../profile/ui/profile_manager/profile_cubit.dart';
-import '../../../see_all/ui/manager/see_all_cubit.dart';
-import '../../../see_all/ui/view/see_all_view.dart';
 import 'home_view.dart';
 
 class NavView extends StatefulWidget {
@@ -56,7 +53,9 @@ class _NavViewState extends State<NavView> {
     ),
     // Appointment
     BlocProvider<AppointmentCubit>(
-      create: (_) => AppointmentCubit(getIt.get<FirebaseAuthService>()),
+      create: (_) => AppointmentCubit(
+        getIt.get<FirebaseAuthService>(),
+      )..fetchBookings(),
       child: const AppointmentView(),
     ),
     // Chat
