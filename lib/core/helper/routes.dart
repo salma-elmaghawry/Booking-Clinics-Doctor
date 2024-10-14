@@ -26,7 +26,10 @@ class AppRouter {
             return BlocProvider<DoctorCubit>(
               create: (_) => DoctorCubit(getIt.get<FirebaseFirestoreService>())
                 ..fetchDoctorById(args["doctorId"]),
-              child: DoctorDetailsView(doctorId: args['doctorId']),
+              child: DoctorDetailsView(
+                doctorId: args['doctorId'],
+                doctorName: '',
+              ),
             );
           },
         );
