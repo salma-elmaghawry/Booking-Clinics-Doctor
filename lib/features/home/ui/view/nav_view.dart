@@ -7,6 +7,7 @@ import '../../../../core/helper/service_locator.dart';
 import '../../../../data/services/remote/firebase_auth.dart';
 import '../../../appointment/manager/appointment_cubit.dart';
 import '../../../appointment/view/appointment_view.dart';
+import '../../../chats/ui/chats_view.dart';
 import '../../../map/data/repo/location_repo/location_repo_imp.dart';
 import '../../../map/data/repo/map_repo/map_impl.dart';
 import '../../../map/data/repo/routes_repo/routes_impl.dart';
@@ -49,6 +50,7 @@ class _NavViewState extends State<NavView> {
       )..predectPlaces(),
       child: const MapView(),
     ),
+    const ChatListScreen(),
     BlocProvider<AppointmentCubit>(
       create: (_) => AppointmentCubit(
         getIt.get<FirebaseAuthService>(),

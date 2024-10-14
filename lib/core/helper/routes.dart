@@ -28,6 +28,7 @@ class AppRouter {
                 ..fetchDoctorById(args["doctorId"]),
               child: DoctorDetailsView(
                 doctorId: args['doctorId'],
+                doctorName: '',
               ),
             );
           },
