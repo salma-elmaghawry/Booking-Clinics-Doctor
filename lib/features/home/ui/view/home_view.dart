@@ -1,6 +1,6 @@
 import 'package:booking_clinics_doctor/core/common/see_all.dart';
 import 'package:booking_clinics_doctor/core/common/skeleton.dart';
-import 'package:booking_clinics_doctor/features/profile/ui/profile_manager/profile_cubit.dart';
+import 'package:booking_clinics_doctor/features/profile/manager/profile_manager/profile_cubit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
@@ -23,7 +23,7 @@ class HomeView extends StatelessWidget {
         left: 6.w,
         right: 6.w,
         bottom: 2.h,
-        top: MediaQuery.of(context).padding.top + 2.h,
+        top: context.query.padding.top + 2.h,
       ),
       children: [
         ListTile(
@@ -80,10 +80,9 @@ class HomeView extends StatelessWidget {
               children: [
                 Icon(
                   Iconsax.info_circle,
-                  color:
-                      context.query.platformBrightness == Brightness.dark
-                          ? ConstColor.primary.color
-                          : ConstColor.icon.color,
+                  color: context.theme.brightness == Brightness.dark
+                      ? ConstColor.primary.color
+                      : ConstColor.icon.color,
                 ),
                 SizedBox(width: 4.w),
                 Text(

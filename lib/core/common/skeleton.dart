@@ -39,13 +39,12 @@ class _SkeletonState extends State<Skeleton>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _updateColorAnimation(); // * Update colors when theme changes
+    _updateColorAnimation();
   }
 
+  // * Update colors when theme changes
   void _updateColorAnimation() {
-    // * Determine if the app is in light or dark mode
-    bool isDark = context.query.platformBrightness == Brightness.dark;
-
+    bool isDark = context.theme.brightness == Brightness.dark;
     _colorAnimation = ColorTween(
       begin: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
       end: isDark ? Colors.grey.shade600 : Colors.grey.shade100,

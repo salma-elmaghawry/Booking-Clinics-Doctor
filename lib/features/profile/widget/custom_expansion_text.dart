@@ -1,7 +1,7 @@
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/constant/const_color.dart';
+import '../../../core/constant/const_color.dart';
 
 class CustomExpansionText extends StatelessWidget {
   const CustomExpansionText({super.key});
