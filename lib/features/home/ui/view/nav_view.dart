@@ -1,5 +1,6 @@
 import 'package:booking_clinics_doctor/core/constant/const_color.dart';
 import 'package:booking_clinics_doctor/core/helper/service_locator.dart';
+import 'package:booking_clinics_doctor/features/chats/ui/chats_view.dart';
 import 'package:booking_clinics_doctor/features/map/data/repo/location_repo/location_repo_imp.dart';
 import 'package:booking_clinics_doctor/features/map/data/repo/map_repo/map_impl.dart';
 import 'package:booking_clinics_doctor/features/map/data/repo/routes_repo/routes_impl.dart';
@@ -28,13 +29,14 @@ class NavView extends StatefulWidget {
 class _NavViewState extends State<NavView> {
   int _index = 0;
   static final List<Widget> _pages = [
+    // All Doctors
     BlocProvider<SeeAllCubit>(
       create: (_) => SeeAllCubit(
         getIt.get<SeeAllRepoImpl>(),
       )..invokeAllDoctors(),
       child: const SeeAllView(),
     ),
-    //SeeAllView(),
+    // Map
     BlocProvider(
       create: (_) => MapCubit(
         mapRepo: getIt.get<MapImpl>(),
@@ -43,12 +45,14 @@ class _NavViewState extends State<NavView> {
       )..predectPlaces(),
       child: const MapView(),
     ),
-
+    // Appointment
     BlocProvider<AppointmentCubit>(
       create: (_) => AppointmentCubit(getIt.get<FirebaseAuthService>()),
       child: const AppointmentView(),
     ),
-
+    // Chat
+    const ChatListScreen(),
+    // Profile
     BlocProvider<ProfileCubit>(
       create: (_) => ProfileCubit()..getUserData(),
       child: const ProfileView(),
@@ -58,12 +62,14 @@ class _NavViewState extends State<NavView> {
     Iconsax.home,
     Iconsax.location4,
     Iconsax.calendar_1,
+    Iconsax.messages,
     Iconsax.user4,
   ];
   static const List<IconData> _iconsFill = [
     Iconsax.home1,
     Iconsax.location5,
     Iconsax.calendar5,
+    Iconsax.messages_15,
     Icons.person,
   ];
 
