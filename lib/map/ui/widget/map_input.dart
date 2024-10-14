@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../../../core/common/input.dart';
 import '../../../core/constant/const_color.dart';
 import '../../data/model/place_details_model/place_details_model.dart';
@@ -48,7 +47,7 @@ class MapInput extends StatelessWidget {
             minWidth: double.infinity,
           ),
           decoration: BoxDecoration(
-            color: MediaQuery.of(context).platformBrightness == Brightness.light
+            color: context.query.platformBrightness == Brightness.light
                 ? ConstColor.secondary.color
                 : ConstColor.iconDark.color,
             borderRadius: BorderRadius.circular(3.5.w),

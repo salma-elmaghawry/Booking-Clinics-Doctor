@@ -81,7 +81,7 @@ class HomeView extends StatelessWidget {
                 Icon(
                   Iconsax.info_circle,
                   color:
-                      context.mediaQuery.platformBrightness == Brightness.dark
+                      context.query.platformBrightness == Brightness.dark
                           ? ConstColor.primary.color
                           : ConstColor.icon.color,
                 ),

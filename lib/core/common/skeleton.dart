@@ -44,7 +44,7 @@ class _SkeletonState extends State<Skeleton>
 
   void _updateColorAnimation() {
     // * Determine if the app is in light or dark mode
-    bool isDark = context.mediaQuery.platformBrightness == Brightness.dark;
+    bool isDark = context.query.platformBrightness == Brightness.dark;
 
     _colorAnimation = ColorTween(
       begin: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
