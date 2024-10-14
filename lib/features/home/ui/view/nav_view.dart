@@ -1,4 +1,5 @@
 import 'package:booking_clinics_doctor/core/constant/const_color.dart';
+import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:booking_clinics_doctor/core/helper/service_locator.dart';
 import 'package:booking_clinics_doctor/features/chats/ui/chats_view.dart';
 import 'package:booking_clinics_doctor/features/map/data/repo/location_repo/location_repo_imp.dart';
@@ -6,7 +7,7 @@ import 'package:booking_clinics_doctor/features/map/data/repo/map_repo/map_impl.
 import 'package:booking_clinics_doctor/features/map/data/repo/routes_repo/routes_impl.dart';
 import 'package:booking_clinics_doctor/features/map/ui/manager/map_cubit.dart';
 import 'package:booking_clinics_doctor/features/map/ui/view/map_view.dart';
-import 'package:booking_clinics_doctor/features/profile/ui/view/profile_view.dart';
+import 'package:booking_clinics_doctor/features/profile/view/profile_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
@@ -14,7 +15,7 @@ import 'package:flutter/material.dart';
 import '../../../../data/services/remote/firebase_auth.dart';
 import '../../../appointment/manager/appointment_cubit.dart';
 import '../../../appointment/view/appointment_view.dart';
-import '../../../profile/ui/profile_manager/profile_cubit.dart';
+import '../../../profile/manager/profile_manager/profile_cubit.dart';
 import 'home_view.dart';
 
 class NavView extends StatefulWidget {
@@ -106,7 +107,7 @@ class _NavViewState extends State<NavView> {
                   },
                   style: IconButton.styleFrom(
                     backgroundColor: _index == index &&
-                            MediaQuery.of(context).platformBrightness ==
+                            context.theme.brightness ==
                                 Brightness.dark
                         ? ConstColor.primary.color
                         : _index == index
@@ -115,7 +116,7 @@ class _NavViewState extends State<NavView> {
                   ),
                   icon: Icon(
                     index == _index ? _iconsFill[index] : _icons[index],
-                    color: MediaQuery.of(context).platformBrightness ==
+                    color: context.theme.brightness ==
                             Brightness.dark
                         ? _index == index
                             ? ConstColor.dark.color

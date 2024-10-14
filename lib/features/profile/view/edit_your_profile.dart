@@ -4,10 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
-import '../../../../core/common/input.dart';
-import '../../../../core/common/profile_image.dart';
-import '../image_manager/pick_image_cubit.dart';
-import '../profile_manager/profile_cubit.dart';
+import '../../../core/common/input.dart';
+import '../../../core/common/profile_image.dart';
+import '../manager/image_manager/pick_image_cubit.dart';
+import '../manager/profile_manager/profile_cubit.dart';
 
 class EditYourProfile extends StatefulWidget {
   const EditYourProfile({super.key, this.email});

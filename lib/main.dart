@@ -15,6 +15,7 @@ import 'features/home/data/repo/home_repo_impl.dart';
 import 'features/home/ui/manager/search/search_cubit.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
+import 'features/profile/manager/theme_manager/theme_cubit.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -44,25 +45,36 @@ class BookingClinics extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ResponsiveSizer(
-      builder: (context, orientation, deviceType) {
-        return BlocProvider(
-          create: (_) => SearchCubit(getIt.get<HomeRepoImpl>()),
-          child: MaterialApp(
-            builder: (_, child) {
-              return MediaQuery(
-                data: MediaQuery.of(context).copyWith(
-                  textScaler: const TextScaler.linear(1.125),
-                ),
-                child: child!,
+      builder: (_, orientation, deviceType) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider<SearchCubit>(
+              create: (_) => SearchCubit(getIt.get<HomeRepoImpl>()),
+            ),
+            BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()..loadTheme()),
+          ],
+          child: BlocBuilder<ThemeCubit, ThemeMode?>(
+            builder: (context, themeMode) {
+              if (themeMode == null) return const SizedBox.shrink();
+              return MaterialApp(
+                builder: (_, child) {
+                  return MediaQuery(
+                    data: MediaQuery.of(context).copyWith(
+                      textScaler: const TextScaler.linear(1.125),
+                    ),
+                    child: child!,
+                  );
+                },
+                theme: lightTheme(),
+                darkTheme: darkTheme(),
+                themeMode: themeMode,
+                title: 'Booking Clinics',
+                debugShowCheckedModeBanner: false,
+                initialRoute:
+                    isUserLoggedIn ? Routes.navRoute : Routes.onboarding,
+                onGenerateRoute: AppRouter.generateRoute,
               );
             },
-            theme: lightTheme(),
-            darkTheme: darkTheme(),
-            title: 'Booking Clinics',
-            debugShowCheckedModeBanner: false,
-            initialRoute: isUserLoggedIn ? Routes.navRoute : Routes.onboarding,
-            onGenerateRoute: AppRouter.generateRoute,
-            //  home: signUp(),
           ),
         );
       },
