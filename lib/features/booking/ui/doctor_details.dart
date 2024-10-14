@@ -5,14 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
-import '../../../../core/common/section_heading.dart';
-import '../../../../core/constant/const_color.dart';
-import '../../../../core/constant/const_string.dart';
-import '../../../../data/models/chat_model.dart';
-import '../../cubit/doc_details_cubit.dart';
-import '../widgets/achievement_column.dart';
-import '../widgets/reviews_item.dart';
-import '../widgets/rounded_doctor_card.dart';
+import '../../../core/common/section_heading.dart';
+import '../../../core/constant/const_color.dart';
+import '../../../core/constant/const_string.dart';
+import '../../../data/models/chat_model.dart';
+import '../cubit/doc_details_cubit.dart';
+import 'widgets/achievement_column.dart';
+import 'widgets/reviews_item.dart';
+import 'widgets/rounded_doctor_card.dart';
 
 class DoctorDetailsView extends StatelessWidget {
   final String doctorId;
@@ -57,18 +57,14 @@ class DoctorDetailsView extends StatelessWidget {
                     // Create a unique chatId
                     String chatId = "${userId}_$doctorId";
                     // Check if a chat already exists between the user and doctor
-                    DocumentSnapshot existingChat = await FirebaseFirestore
-                        .instance
+                    DocumentSnapshot existingChat = await FirebaseFirestore.instance
                         .collection('chats')
                         .doc(chatId)
                         .get();
 
                     // If no chat exists, create a new one
                     if (!existingChat.exists) {
-                      await FirebaseFirestore.instance
-                          .collection('chats')
-                          .doc(chatId)
-                          .set({
+                      await FirebaseFirestore.instance.collection('chats').doc(chatId).set({
                         'participants': [userId, doctorId],
                         'lastMessage': '',
                         'lastMessageTime': FieldValue.serverTimestamp(),
@@ -99,8 +95,7 @@ class DoctorDetailsView extends StatelessWidget {
                 ),
                 SizedBox(height: 2.h),
                 // About me
-                const SectionHeading(
-                    title: 'About me', showActionButton: false),
+                const SectionHeading(title: 'About me', showActionButton: false),
                 SizedBox(height: 1.h),
                 Text(
                   doctor.about ?? "No information provided.",
@@ -111,8 +106,7 @@ class DoctorDetailsView extends StatelessWidget {
                 SizedBox(height: 2.h),
 
                 // Working Time
-                const SectionHeading(
-                    title: 'Working Time', showActionButton: false),
+                const SectionHeading(title: 'Working Time', showActionButton: false),
                 SizedBox(height: 1.h),
                 Text(
                   doctor.workingHours ?? "Not available",

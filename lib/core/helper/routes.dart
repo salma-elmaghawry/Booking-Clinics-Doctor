@@ -10,7 +10,7 @@ import '../../data/models/chat_model.dart';
 import '../../data/services/remote/firebase_firestore.dart';
 import '../../features/auth/ui/views/forget_password.dart';
 import '../../features/booking/cubit/doc_details_cubit.dart';
-import '../../features/booking/ui/view/doctor_details.dart';
+import '../../features/booking/ui/doctor_details.dart';
 import '../../features/home/ui/view/nav_view.dart';
 import '../../features/see_all/data/see_all_repo_impl.dart';
 import '../../features/see_all/ui/manager/see_all_cubit.dart';
