@@ -3,8 +3,10 @@ import 'package:booking_clinics_doctor/core/helper/service_locator.dart';
 import 'package:booking_clinics_doctor/features/auth/ui/views/onboarding_screen2.dart';
 import 'package:booking_clinics_doctor/features/auth/ui/views/signin.dart';
 import 'package:booking_clinics_doctor/features/auth/ui/views/signup.dart';
+import 'package:booking_clinics_doctor/features/chats/ui/chat_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../data/models/chat_model.dart';
 import '../../data/services/remote/firebase_firestore.dart';
 import '../../features/auth/ui/views/forget_password.dart';
 import '../../features/booking/cubit/doc_details_cubit.dart';
@@ -28,7 +30,7 @@ class AppRouter {
                 ..fetchDoctorById(args["doctorId"]),
               child: DoctorDetailsView(
                 doctorId: args['doctorId'],
-                doctorName: '',
+                doctorName: args['doctorName'],
               ),
             );
           },
@@ -41,6 +43,15 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const OnBoarding());
       case Routes.forgetPassword:
         return MaterialPageRoute(builder: (_) => const ForgetPassword());
+      case Routes.chatDetailsRoute:
+        final chatModel = settings.arguments as ChatModel;
+        return MaterialPageRoute(
+          builder: (_) => ChatDetailScreen(
+            chatId: chatModel.chatId,
+            chatPartnerName: chatModel.chatPartnerName,
+            chatPartnerId: chatModel.chatPartnerId,
+          ),
+        );
       case Routes.seeAll:
         return MaterialPageRoute(
           builder: (_) => BlocProvider<SeeAllCubit>(

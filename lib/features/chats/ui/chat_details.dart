@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
+
+import '../../../core/constant/const_color.dart';
 import 'widgets/message_card.dart';
 
 class ChatDetailScreen extends StatefulWidget {
