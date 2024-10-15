@@ -5,16 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
-
 import 'core/helper/observer.dart';
 import 'core/helper/service_locator.dart';
 import 'core/theme/dark_theme.dart';
 import 'core/theme/light_theme.dart';
 import 'data/services/remote/firebase_auth.dart';
-import 'features/home/data/repo/home_repo_impl.dart';
-import 'features/home/ui/manager/search/search_cubit.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-
 import 'features/profile/manager/theme_manager/theme_cubit.dart';
 import 'firebase_options.dart';
 
@@ -33,7 +29,6 @@ Future<void> main() async {
   ]);
   bool isUserLoggedIn = await FirebaseAuthService().isLoggedIn();
   // ! _____
-  FlutterNativeSplash.remove();
   runApp(BookingClinics(isUserLoggedIn: isUserLoggedIn));
 }
 
@@ -48,9 +43,6 @@ class BookingClinics extends StatelessWidget {
       builder: (_, orientation, deviceType) {
         return MultiBlocProvider(
           providers: [
-            BlocProvider<SearchCubit>(
-              create: (_) => SearchCubit(getIt.get<HomeRepoImpl>()),
-            ),
             BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()..loadTheme()),
           ],
           child: BlocBuilder<ThemeCubit, ThemeMode?>(
@@ -68,7 +60,7 @@ class BookingClinics extends StatelessWidget {
                 theme: lightTheme(),
                 darkTheme: darkTheme(),
                 themeMode: themeMode,
-                title: 'Booking Clinics',
+                title: 'Hagzy-Dashboard',
                 debugShowCheckedModeBanner: false,
                 initialRoute:
                     isUserLoggedIn ? Routes.navRoute : Routes.onboarding,
