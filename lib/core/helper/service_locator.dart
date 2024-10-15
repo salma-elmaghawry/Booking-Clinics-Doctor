@@ -9,7 +9,6 @@ import '../../features/home/data/repo/home_repo_impl.dart';
 import '../../features/map/data/repo/location_repo/location_repo_imp.dart';
 import '../../features/map/data/repo/map_repo/map_impl.dart';
 import '../../features/map/data/repo/routes_repo/routes_impl.dart';
-import '../../features/see_all/data/see_all_repo_impl.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -21,7 +20,6 @@ void setupServiceLocator() {
   getIt.registerLazySingleton<MapImpl>(() => MapImpl());
   getIt.registerLazySingleton<RoutesImpl>(() => RoutesImpl());
   getIt.registerLazySingleton<HomeRepoImpl>(() => HomeRepoImpl());
-  getIt.registerLazySingleton<SeeAllRepoImpl>(() => SeeAllRepoImpl());
 
   // ! _____ Services _____ ! //
   getIt.registerLazySingleton<Dio>(() => Dio());

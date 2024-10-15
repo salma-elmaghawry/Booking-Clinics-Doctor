@@ -37,6 +37,10 @@ dependencies:
   geolocator: ^12.0.0
   fl_chart: ^0.69.0
 
+flutter_native_splash:
+  background_image: "assets/images/splash_logo.png"
+  android_12:
+    background_image_android: "assets/images/splash_logo.png"
 
 dev_dependencies:
   flutter_test:
