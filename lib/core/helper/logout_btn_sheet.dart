@@ -11,26 +11,19 @@ class LogoutBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkTheme = MediaQuery.of(context).platformBrightness == Brightness.dark;
-
-    return Container(
-      padding: const EdgeInsets.all(25),
-
-      decoration: BoxDecoration(
-        color: isDarkTheme? MyColors.dark : Colors.white,
-        borderRadius: BorderRadius.circular(25),
-      ),
+    return Padding(
+      padding: EdgeInsets.fromLTRB(6.w, 0, 6.w, 3.h),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text("Logout", style: context.semi20),
-          Divider(color: ConstColor.secondary.color, height: 4.h),
           Text(
-            "Are you sure you want to log out?",
-            style: context.semi16?.copyWith(
+            "Logout",
+            style: context.semi20?.copyWith(
               color: ConstColor.icon.color,
             ),
           ),
+          Divider(height: 4.h),
+          Text("Are you sure you want to log out?", style: context.semi16),
           SizedBox(height: 3.h),
           Row(
             children: [
@@ -38,8 +31,8 @@ class LogoutBottomSheet extends StatelessWidget {
                 child: CustomButton(
                   text: 'Cancel',
                   textColor: Colors.black,
-                  color: MyColors.gray,
                   borderRadius: 3.5.w,
+                  color: MyColors.gray,
                   textSize: context.bold14?.fontSize,
                   onTap: () => context.nav.pop(),
                 ),
