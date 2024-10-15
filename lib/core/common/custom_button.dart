@@ -24,9 +24,10 @@ class CustomButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    final isDark = context.theme.brightness == Brightness.dark;
     return Material(
-      color: color ?? (isDark ? ConstColor.primary.color : ConstColor.dark.color),
+      color:
+          color ?? (isDark ? ConstColor.primary.color : ConstColor.dark.color),
       borderRadius: BorderRadius.circular(borderRadius!),
       child: InkWell(
         onTap: onTap ?? () {},
@@ -45,8 +46,7 @@ class CustomButton extends StatelessWidget {
                 fontSize: textSize ?? 14.sp,
                 fontWeight: FontWeight.w600,
                 color: textColor ??
-                    (MediaQuery.of(context).platformBrightness ==
-                            Brightness.dark
+                    (isDark
                         ? ConstColor.dark.color
                         : ConstColor.secondary.color),
               ),
