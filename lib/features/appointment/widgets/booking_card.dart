@@ -9,7 +9,7 @@ import '../../../data/models/booking.dart';
 class BookingCard extends StatelessWidget {
   final Widget buttons;
   final Booking booking;
-  const BookingCard({required this.booking, required this.buttons, super.key});
+  const   BookingCard({required this.booking, required this.buttons, super.key});
 
   @override
   Widget build(BuildContext context) {

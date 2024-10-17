@@ -6,7 +6,8 @@ class FirebaseAuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Login with Email and Password
-  Future<User?> loginWithEmailAndPassword(String email, String password, BuildContext context) async {
+  Future<User?> loginWithEmailAndPassword(
+      String email, String password, BuildContext context) async {
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -19,14 +20,15 @@ class FirebaseAuthService {
           await _saveUid(user.uid);
           await _setLoginStatus(true);
           return user;
-        }
-        else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Please verify your email first'),
-              backgroundColor: Colors.red,
-            ),
-          );
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Please verify your email first'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
           return null;
         }
       }

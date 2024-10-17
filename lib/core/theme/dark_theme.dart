@@ -14,10 +14,10 @@ ThemeData darkTheme() {
     appBarTheme: AppBarTheme(
       titleTextStyle: TextStyle(
         fontSize: 18.sp,
-        color: Colors.white,
         fontWeight: FontWeight.w500,
+        color: ConstColor.secondary.color,
       ),
-      titleSpacing: 4.w,
+      titleSpacing: 0,
       centerTitle: true,
       scrolledUnderElevation: 0,
       backgroundColor: ConstColor.dark.color,
@@ -29,37 +29,34 @@ ThemeData darkTheme() {
       ),
       iconTheme: IconThemeData(
         size: 20.sp,
-        color: ConstColor.secondary.color,
+        color: ConstColor.icon.color,
       ),
       actionsIconTheme: IconThemeData(
         size: 20.sp,
-        color: ConstColor.secondary.color,
+        color: ConstColor.icon.color,
       ),
     ),
     // ! _____ TabBar _____ ! //
     tabBarTheme: TabBarTheme(
-      dividerHeight: 0,
+      dividerHeight: 0.6,
       labelColor: Colors.white,
       dividerColor: Colors.transparent,
       indicatorSize: TabBarIndicatorSize.tab,
       unselectedLabelColor: ConstColor.icon.color,
-      labelStyle: TextStyle(
-        fontSize: 14.sp,
-        fontWeight: FontWeight.w500,
-      ),
+      splashFactory: NoSplash.splashFactory,
+      labelStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
       unselectedLabelStyle: TextStyle(fontSize: 14.sp),
       labelPadding: EdgeInsets.symmetric(horizontal: 0.5.w),
       overlayColor: const WidgetStatePropertyAll(Colors.transparent),
       indicator: ShapeDecoration(
-        color: ConstColor.dark.color,
         shape: StadiumBorder(
-          side: BorderSide(color: ConstColor.secondary.color),
+          side: BorderSide(color: ConstColor.primary.color, width: .5.w),
         ),
       ),
     ),
     // ! _____ Card Theme _____ ! //
     cardTheme: CardTheme(
-      elevation: 3,
+      elevation: 0,
       margin: EdgeInsets.zero,
       clipBehavior: Clip.hardEdge,
       color: ConstColor.iconDark.color,
@@ -73,12 +70,21 @@ ThemeData darkTheme() {
       textColor: Colors.white,
       contentPadding: EdgeInsets.zero,
       iconColor: ConstColor.icon.color,
+      titleTextStyle: TextStyle(
+        inherit: false,
+        fontSize: 15.5.sp,
+        fontWeight: FontWeight.w600,
+      ),
+      subtitleTextStyle: TextStyle(
+        inherit: false,
+        fontSize: 14.sp,
+      ),
       leadingAndTrailingTextStyle: const TextStyle(color: Colors.white),
     ),
     // ! _____ Icon _____ ! //
     iconTheme: IconThemeData(
       size: 20.sp,
-      color: ConstColor.secondary.color,
+      color: ConstColor.icon.color,
     ),
     // ! _____ ElevatedButton _____ ! //
     elevatedButtonTheme: ElevatedButtonThemeData(
@@ -97,11 +103,11 @@ ThemeData darkTheme() {
     // ! _____ OutlinedButton _____ ! //
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        backgroundColor: ConstColor.iconDark.color,
+        // backgroundColor: ConstColor.iconDark.color,
         foregroundColor: ConstColor.secondary.color,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(3.w),
-          side: BorderSide(color: ConstColor.dark.color),
+          borderRadius: BorderRadius.circular(50),
+          side: BorderSide(color: ConstColor.primary.color),
         ),
         textStyle: TextStyle(
           inherit: false,
@@ -145,12 +151,12 @@ ThemeData darkTheme() {
     ),
     // ! _____ Fixed Bottom Sheet _____ ! //
     bottomSheetTheme: BottomSheetThemeData(
-      constraints: BoxConstraints(
-        maxHeight: 35.h,
-        minHeight: 10.h,
+      showDragHandle: true,
+      constraints: const BoxConstraints(
         minWidth: double.infinity,
       ),
-      backgroundColor: Colors.white,
+      dragHandleColor: ConstColor.primary.color,
+      backgroundColor: ConstColor.dark.color,
     ),
     // ! _____ Vertical & Horizontal Divider Theme _____ ! //
     dividerTheme: DividerThemeData(
@@ -160,9 +166,12 @@ ThemeData darkTheme() {
     // ! _____ Dialog Theme _____ ! //
     dialogTheme: DialogTheme(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(4.w),
+          topRight: Radius.circular(4.w),
+        ),
       ),
-      backgroundColor: ConstColor.dark.color,
+      backgroundColor: ConstColor.iconDark.color,
     ),
     // ! _____ Switch Theme _____ ! //
     switchTheme: SwitchThemeData(
@@ -193,7 +202,7 @@ ThemeData darkTheme() {
     // ! _____ Input Theme _____ ! //
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      isDense: true,
+      // isDense: true,
       fillColor: ConstColor.iconDark.color,
       hintStyle: TextStyle(
         fontSize: 14.5.sp,

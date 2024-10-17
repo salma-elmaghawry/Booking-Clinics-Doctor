@@ -1,4 +1,5 @@
 import 'package:booking_clinics_doctor/core/constant/const_color.dart';
+import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:booking_clinics_doctor/core/helper/service_locator.dart';
 import 'package:booking_clinics_doctor/features/chats/ui/chats_view.dart';
 import 'package:booking_clinics_doctor/features/map/data/repo/location_repo/location_repo_imp.dart';
@@ -6,8 +7,7 @@ import 'package:booking_clinics_doctor/features/map/data/repo/map_repo/map_impl.
 import 'package:booking_clinics_doctor/features/map/data/repo/routes_repo/routes_impl.dart';
 import 'package:booking_clinics_doctor/features/map/ui/manager/map_cubit.dart';
 import 'package:booking_clinics_doctor/features/map/ui/view/map_view.dart';
-import 'package:booking_clinics_doctor/features/profile/ui/view/profile_view.dart';
-import 'package:booking_clinics_doctor/features/see_all/data/see_all_repo_impl.dart';
+import 'package:booking_clinics_doctor/features/profile/view/profile_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
@@ -15,9 +15,8 @@ import 'package:flutter/material.dart';
 import '../../../../data/services/remote/firebase_auth.dart';
 import '../../../appointment/manager/appointment_cubit.dart';
 import '../../../appointment/view/appointment_view.dart';
-import '../../../profile/ui/profile_manager/profile_cubit.dart';
-import '../../../see_all/ui/manager/see_all_cubit.dart';
-import '../../../see_all/ui/view/see_all_view.dart';
+import '../../../profile/manager/profile_manager/profile_cubit.dart';
+import 'home_view.dart';
 
 class NavView extends StatefulWidget {
   const NavView({super.key});
@@ -29,12 +28,20 @@ class NavView extends StatefulWidget {
 class _NavViewState extends State<NavView> {
   int _index = 0;
   static final List<Widget> _pages = [
-    // All Doctors
-    BlocProvider<SeeAllCubit>(
-      create: (_) => SeeAllCubit(
-        getIt.get<SeeAllRepoImpl>(),
-      )..invokeAllDoctors(),
-      child: const SeeAllView(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<AppointmentCubit>(
+          create: (_) => AppointmentCubit(
+            getIt.get<FirebaseAuthService>(),
+          )..fetchBookings(),
+        ),
+        BlocProvider<ProfileCubit>(
+          create: (_) => ProfileCubit(
+            getIt.get<FirebaseAuthService>(),
+          )..getUserData(),
+        ),
+      ],
+      child: const HomeView(),
     ),
     // Map
     BlocProvider(
@@ -47,14 +54,18 @@ class _NavViewState extends State<NavView> {
     ),
     // Appointment
     BlocProvider<AppointmentCubit>(
-      create: (_) => AppointmentCubit(getIt.get<FirebaseAuthService>()),
+      create: (_) => AppointmentCubit(
+        getIt.get<FirebaseAuthService>(),
+      )..fetchBookings(),
       child: const AppointmentView(),
     ),
     // Chat
     const ChatListScreen(),
     // Profile
     BlocProvider<ProfileCubit>(
-      create: (_) => ProfileCubit()..getUserData(),
+      create: (_) => ProfileCubit(
+        getIt.get<FirebaseAuthService>(),
+      )..getUserData(),
       child: const ProfileView(),
     ),
   ];
@@ -78,9 +89,12 @@ class _NavViewState extends State<NavView> {
     return Scaffold(
       extendBody: _index == 1,
       resizeToAvoidBottomInset: false,
-      body: _pages[_index],
+      body: SafeArea(child: _pages[_index]),
       bottomNavigationBar: ClipRRect(
-        borderRadius: BorderRadius.circular(4.w),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(4.w),
+          topRight: Radius.circular(4.w),
+        ),
         child: BottomAppBar(
           height: 7.5.h,
           child: Row(
@@ -93,7 +107,7 @@ class _NavViewState extends State<NavView> {
                   },
                   style: IconButton.styleFrom(
                     backgroundColor: _index == index &&
-                            MediaQuery.of(context).platformBrightness ==
+                            context.theme.brightness ==
                                 Brightness.dark
                         ? ConstColor.primary.color
                         : _index == index
@@ -102,7 +116,7 @@ class _NavViewState extends State<NavView> {
                   ),
                   icon: Icon(
                     index == _index ? _iconsFill[index] : _icons[index],
-                    color: MediaQuery.of(context).platformBrightness ==
+                    color: context.theme.brightness ==
                             Brightness.dark
                         ? _index == index
                             ? ConstColor.dark.color
