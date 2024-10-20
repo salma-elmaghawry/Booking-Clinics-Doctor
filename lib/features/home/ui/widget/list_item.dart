@@ -1,6 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/common/custom_image.dart';
 import '../../../../core/common/rate.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:booking_clinics_doctor/data/models/doctor_model.dart';
@@ -17,7 +18,16 @@ class ListItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        CustomImage(image: doctor.imageUrl),
+        CachedNetworkImage(
+          imageUrl: doctor.imageUrl ?? "",
+          errorListener: (value) {},
+          errorWidget: (context, url, error) => Icon(
+            Iconsax.danger,
+            size: 42.sp,
+          ),
+          fit: BoxFit.cover,
+          height: 20.h,
+        ),
         const Spacer(),
         ListTile(
           dense: true,

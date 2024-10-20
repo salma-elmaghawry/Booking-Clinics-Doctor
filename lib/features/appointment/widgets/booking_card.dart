@@ -62,7 +62,7 @@ class BookingCard extends StatelessWidget {
                   fallbackAsset: MyImages.doctorAvatar,
                   height: 35.w,
                   width: 35.w,
-                  borderRadius: 3.w,
+                  borderRadius: 50.w,
                 ),
                 SizedBox(width: 1.w),
                 Expanded(

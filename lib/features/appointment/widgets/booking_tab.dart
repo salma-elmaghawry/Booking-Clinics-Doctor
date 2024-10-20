@@ -1,5 +1,6 @@
 import 'package:booking_clinics_doctor/core/constant/const_color.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
+import 'package:booking_clinics_doctor/core/helper/onrefresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
@@ -44,7 +45,7 @@ class BookingTab extends StatelessWidget {
           );
         } else {
           return RefreshIndicator(
-            onRefresh: () async => await onRefresh(context),
+            onRefresh: () async => await onRefreshAppointment(context),
             child: ListView.separated(
               itemCount: bookings.length,
               separatorBuilder: (_, __) => SizedBox(height: 1.5.h),
@@ -91,14 +92,5 @@ class BookingTab extends StatelessWidget {
         }
       },
     );
-  }
-
-  Future<void> onRefresh(BuildContext context) async {
-    final cubit = context.read<AppointmentCubit>();
-    cubit.canceled.clear();
-    cubit.pending.clear();
-    cubit.compined.clear();
-    cubit.completed.clear();
-    await cubit.fetchBookings();
   }
 }
