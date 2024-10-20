@@ -43,50 +43,62 @@ class BookingTab extends StatelessWidget {
             ],
           );
         } else {
-          return ListView.separated(
-            itemCount: bookings.length,
-            separatorBuilder: (_, __) => SizedBox(height: 1.5.h),
-            padding: EdgeInsets.only(
-              top: 1.h,
-              left: 4.w,
-              right: 4.w,
-              bottom: 2.h,
-            ),
-            itemBuilder: (_, index) {
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (index == 0 &&
-                      (status == "Canceled" || status == "Completed"))
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: 1.h,
-                        left: 4.w,
-                        right: 4.h,
-                        bottom: 4.h,
-                      ),
-                      child: Text(
-                        "Hint: $status Bookings are automatically deleted after a week.",
-                        style: context.regular14?.copyWith(
-                          color: ConstColor.icon.color,
+          return RefreshIndicator(
+            onRefresh: () async => await onRefresh(context),
+            child: ListView.separated(
+              itemCount: bookings.length,
+              separatorBuilder: (_, __) => SizedBox(height: 1.5.h),
+              padding: EdgeInsets.only(
+                top: 1.h,
+                left: 4.w,
+                right: 4.w,
+                bottom: 2.h,
+              ),
+              itemBuilder: (_, index) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (index == 0 &&
+                        (status == "Canceled" || status == "Completed"))
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: 1.h,
+                          left: 4.w,
+                          right: 4.h,
+                          bottom: 4.h,
                         ),
-                        textAlign: TextAlign.center,
+                        child: Text(
+                          "Hint: $status Bookings are automatically deleted after a week.",
+                          style: context.regular14?.copyWith(
+                            color: ConstColor.icon.color,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    BookingCard(
+                      booking: bookings[index],
+                      buttons: ActionButtons(
+                        status: status,
+                        bookingId: index,
+                        bookings: bookings,
                       ),
                     ),
-                  BookingCard(
-                    booking: bookings[index],
-                    buttons: ActionButtons(
-                      status: status,
-                      bookingId: index,
-                      bookings: bookings,
-                    ),
-                  ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           );
         }
       },
     );
+  }
+
+  Future<void> onRefresh(BuildContext context) async {
+    final cubit = context.read<AppointmentCubit>();
+    cubit.canceled.clear();
+    cubit.pending.clear();
+    cubit.compined.clear();
+    cubit.completed.clear();
+    await cubit.fetchBookings();
   }
 }

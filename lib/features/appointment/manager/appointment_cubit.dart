@@ -18,7 +18,7 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   final FirebaseAuthService _authService;
   WeeklyBookingData weeklyData = WeeklyBookingData();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  AppointmentCubit(this._authService) : super(AppointmentLoading());
+  AppointmentCubit(this._authService) : super(AppointmentInitial());
 
   Future<void> agreeBooking({required int index}) async {
     try {
@@ -110,6 +110,7 @@ class AppointmentCubit extends Cubit<AppointmentState> {
 
   // ! Get bookings when open the page first time
   Future<void> fetchBookings() async {
+    emit(AppointmentLoading());
     try {
       final snapshot = await _doctorDoc;
       if (snapshot.exists) {
