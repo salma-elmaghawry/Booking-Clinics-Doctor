@@ -16,7 +16,7 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   List<Booking> completed = [];
   List<Booking> compined = [];
   final FirebaseAuthService _authService;
-  // WeeklyBookingData weeklyData = WeeklyBookingData();
+  WeeklyBookingData weeklyData = WeeklyBookingData();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   AppointmentCubit(this._authService) : super(AppointmentLoading());
 
@@ -106,36 +106,33 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     bool statusUpdated = false;
     DateTime currentDate = DateTime.now();
 
-    // * List to keep track of bookings to delete
+    // * List to keep track of bookings to keep after cleaning up old bookings
     List<Booking> bookingsToKeep = [];
 
-    for (int i = 0; i < doctor.bookings.length; i++) {
-      Booking booking = doctor.bookings[i];
+    for (Booking booking in doctor.bookings) {
       DateTime bookingDate = DateTime.parse(booking.date);
 
       // * Update Pending bookings to Completed if their date is in the past
       if (booking.bookingStatus == 'Pending' &&
-          bookingDate.isBefore(currentDate)) {
+          bookingDate.isBefore(
+              DateTime(currentDate.year, currentDate.month, currentDate.day))) {
         booking.bookingStatus = 'Completed';
         statusUpdated = true;
       }
 
-      // * Keep bookings that are not Completed or Canceled more than a week ago
-      if (booking.bookingStatus == 'Completed' ||
-          booking.bookingStatus == 'Canceled') {
-        DateTime oneWeekAgo = currentDate.subtract(const Duration(days: 7));
-        if (bookingDate.isAfter(oneWeekAgo)) {
-          bookingsToKeep.add(booking); // * Keep bookings that are within a week
-        }
-      } else {
-        // * Keep all other bookings
-        bookingsToKeep.add(booking);
+      // * Remove bookings that are either Completed or Canceled and older than a week
+      if ((booking.bookingStatus == 'Completed' ||
+              booking.bookingStatus == 'Canceled') &&
+          bookingDate.isBefore(currentDate.subtract(const Duration(days: 7)))) {
+        continue; // Skip adding this booking to the bookingsToKeep list, effectively deleting it
       }
+
+      // * Keep all other bookings
+      bookingsToKeep.add(booking);
     }
 
-    // * If any status was updated or bookings were removed, update Firestore
+    // * Update Firestore only if there were changes in the status or bookings list
     if (statusUpdated || bookingsToKeep.length != doctor.bookings.length) {
-      // * Update doctor bookings in Firestore
       final ref = await _doctorRef;
       List<Map<String, dynamic>> updatedBookings =
           bookingsToKeep.map((booking) => booking.toJson()).toList();
