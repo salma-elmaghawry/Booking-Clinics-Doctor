@@ -25,49 +25,75 @@ class ActionButtons extends StatelessWidget {
     final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
     if (status == 'Pending') {
       return Row(
-        children: [
-          Expanded(
-            child: CustomButton(
-              text: 'Reject',
-              color: MyColors.gray,
-              textSize: 14.5.sp,
-              padding: const EdgeInsets.all(12),
-              textColor: MyColors.dark2,
-              onTap: () {
-                final read = context.read<AppointmentCubit>();
-                showMsg(
-                  context,
-                  title: "Cancel",
-                  msg:
-                      "Are you sure? This appointment for ${bookings[bookingId].name} will be Rejected!",
-                  alertWidget: Icon(
-                    Iconsax.danger,
-                    size: 35.sp,
-                    color: MediaQuery.of(context).platformBrightness ==
-                            Brightness.light
-                        ? Colors.black
-                        : ConstColor.primary.color,
+        children: bookings[bookingId].isAccepted == 1
+            ? []
+            : [
+                Expanded(
+                  child: CustomButton(
+                    text: 'Deny',
+                    color: MyColors.gray,
+                    textSize: 14.5.sp,
+                    padding: const EdgeInsets.all(12),
+                    textColor: MyColors.dark2,
+                    onTap: () {
+                      final read = context.read<AppointmentCubit>();
+                      showMsg(
+                        context,
+                        title: "Cancel",
+                        msg:
+                            "Are you sure? This appointment for ${bookings[bookingId].name} will be Rejected!",
+                        alertWidget: Icon(
+                          Iconsax.danger,
+                          size: 35.sp,
+                          color: MediaQuery.of(context).platformBrightness ==
+                                  Brightness.light
+                              ? Colors.black
+                              : ConstColor.primary.color,
+                        ),
+                        onPressed: () async {
+                          context
+                              .read<AppointmentCubit>()
+                              .rejectBooking(index: read.index!);
+                        },
+                      );
+                      context.read<AppointmentCubit>().index = bookingId;
+                    },
                   ),
-                  onPressed: () async {
-                    context.read<AppointmentCubit>().reject(index: read.index!);
-                  },
-                );
-                context.read<AppointmentCubit>().index = bookingId;
-              },
-            ),
-          ),
-          SizedBox(width: 4.w),
-          Expanded(
-            child: CustomButton(
-              text: 'Accept',
-              color: isDark ? MyColors.primary : MyColors.dark,
-              textSize: 14.5.sp,
-              padding: const EdgeInsets.all(12),
-              textColor: isDark ? MyColors.dark : Colors.white,
-              onTap: () {},
-            ),
-          ),
-        ],
+                ),
+                SizedBox(width: 4.w),
+                Expanded(
+                  child: CustomButton(
+                    text: 'Accept',
+                    color: isDark ? MyColors.primary : MyColors.dark,
+                    textSize: 14.5.sp,
+                    padding: const EdgeInsets.all(12),
+                    textColor: isDark ? MyColors.dark : Colors.white,
+                    onTap: () {
+                      final read = context.read<AppointmentCubit>();
+                      showMsg(
+                        context,
+                        title: "Accept",
+                        msg:
+                            "Are you sure? Accept appointment for ${bookings[bookingId].name}",
+                        alertWidget: Icon(
+                          Iconsax.danger,
+                          size: 35.sp,
+                          color: MediaQuery.of(context).platformBrightness ==
+                                  Brightness.light
+                              ? Colors.black
+                              : ConstColor.primary.color,
+                        ),
+                        onPressed: () async {
+                          context
+                              .read<AppointmentCubit>()
+                              .agreeBooking(index: read.index!);
+                        },
+                      );
+                      context.read<AppointmentCubit>().index = bookingId;
+                    },
+                  ),
+                ),
+              ],
       );
     } else if (status == 'Completed') {
       return Row(

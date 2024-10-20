@@ -16,11 +16,37 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   List<Booking> completed = [];
   List<Booking> compined = [];
   final FirebaseAuthService _authService;
-  // WeeklyBookingData weeklyData = WeeklyBookingData();
+  WeeklyBookingData weeklyData = WeeklyBookingData();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  AppointmentCubit(this._authService) : super(AppointmentLoading());
+  AppointmentCubit(this._authService) : super(AppointmentInitial());
 
-  Future<void> reject({required int index}) async {
+  Future<void> agreeBooking({required int index}) async {
+    try {
+      emit(ActionClicked());
+      pending[index].isAccepted = 1;
+      // pending[index].bookingStatus = "Canceled";
+      // ! Update patient bookings
+      final patientRef = await _patientRef(pending[index].personId);
+      await patientRef.update({
+        'bookings': List<dynamic>.from(
+          _compineBookings.map((booking) => booking.toJson()),
+        ),
+      });
+      // ! Update doctor bookings
+      await _updateDoctorBookings(
+        index: index,
+        bookings: pending,
+        updatedBooking: pending[index],
+      );
+      debugPrint("Rejected Succesfully!");
+      emit(AppointmentSuccess());
+    } catch (e) {
+      debugPrint("$e");
+      debugPrint("Oops... Error in reject method!");
+    }
+  }
+
+  Future<void> rejectBooking({required int index}) async {
     try {
       emit(ActionClicked());
       pending[index].isAccepted = -1;
@@ -67,8 +93,8 @@ class AppointmentCubit extends Cubit<AppointmentState> {
           doctor.bookings[bookingIndex].isAccepted = updatedBooking.isAccepted;
           doctor.bookings[bookingIndex].bookingStatus =
               updatedBooking.bookingStatus;
-          doctor.bookings[bookingIndex].date = updatedBooking.date;
-          doctor.bookings[bookingIndex].time = updatedBooking.time;
+          // doctor.bookings[bookingIndex].date = updatedBooking.date;
+          // doctor.bookings[bookingIndex].time = updatedBooking.time;
           final ref = await _doctorRef;
           await ref.update({
             'bookings': List.from(
@@ -84,6 +110,7 @@ class AppointmentCubit extends Cubit<AppointmentState> {
 
   // ! Get bookings when open the page first time
   Future<void> fetchBookings() async {
+    emit(AppointmentLoading());
     try {
       final snapshot = await _doctorDoc;
       if (snapshot.exists) {
@@ -106,36 +133,33 @@ class AppointmentCubit extends Cubit<AppointmentState> {
     bool statusUpdated = false;
     DateTime currentDate = DateTime.now();
 
-    // * List to keep track of bookings to delete
+    // * List to keep track of bookings to keep after cleaning up old bookings
     List<Booking> bookingsToKeep = [];
 
-    for (int i = 0; i < doctor.bookings.length; i++) {
-      Booking booking = doctor.bookings[i];
+    for (Booking booking in doctor.bookings) {
       DateTime bookingDate = DateTime.parse(booking.date);
 
       // * Update Pending bookings to Completed if their date is in the past
       if (booking.bookingStatus == 'Pending' &&
-          bookingDate.isBefore(currentDate)) {
+          bookingDate.isBefore(
+              DateTime(currentDate.year, currentDate.month, currentDate.day))) {
         booking.bookingStatus = 'Completed';
         statusUpdated = true;
       }
 
-      // * Keep bookings that are not Completed or Canceled more than a week ago
-      if (booking.bookingStatus == 'Completed' ||
-          booking.bookingStatus == 'Canceled') {
-        DateTime oneWeekAgo = currentDate.subtract(const Duration(days: 7));
-        if (bookingDate.isAfter(oneWeekAgo)) {
-          bookingsToKeep.add(booking); // * Keep bookings that are within a week
-        }
-      } else {
-        // * Keep all other bookings
-        bookingsToKeep.add(booking);
+      // * Remove bookings that are either Completed or Canceled and older than a week
+      if ((booking.bookingStatus == 'Completed' ||
+              booking.bookingStatus == 'Canceled') &&
+          bookingDate.isBefore(currentDate.subtract(const Duration(days: 7)))) {
+        continue; // Skip adding this booking to the bookingsToKeep list, effectively deleting it
       }
+
+      // * Keep all other bookings
+      bookingsToKeep.add(booking);
     }
 
-    // * If any status was updated or bookings were removed, update Firestore
+    // * Update Firestore only if there were changes in the status or bookings list
     if (statusUpdated || bookingsToKeep.length != doctor.bookings.length) {
-      // * Update doctor bookings in Firestore
       final ref = await _doctorRef;
       List<Map<String, dynamic>> updatedBookings =
           bookingsToKeep.map((booking) => booking.toJson()).toList();
@@ -148,20 +172,20 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   // ! Get Keys of Chart from Bookings Date.
   static double _getDay(DateTime date) {
     switch (date.weekday) {
-      case 7:
-        return 0;
-      case 1:
+      case DateTime.sunday:
+        return 0; // Sunday
+      case DateTime.monday:
         return 1;
-      case 2:
+      case DateTime.tuesday:
         return 2;
-      case 3:
+      case DateTime.wednesday:
         return 3;
-      case 4:
+      case DateTime.thursday:
         return 4;
-      case 5:
+      case DateTime.friday:
         return 5;
-      case 6:
-        return 6;
+      case DateTime.saturday:
+        return 6; // Saturday
       default:
         return -1;
     }
@@ -173,14 +197,31 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   //   double dayOfWeek = _getDay(bookingDate);
   //   weeklyData.updateBooking(dayOfWeek, booking.bookingStatus);
   // }
+  // void _coordinates(Booking booking) {
+  //   DateTime now = DateTime.now();
+  //   DateTime bookingDate = DateTime.parse(booking.date);
+
+  //   // * Calculate the start and end of the current week
+  //   DateTime startOfWeek =
+  //       now.subtract(Duration(days: now.weekday - 1)); // Monday
+  //   DateTime endOfWeek = startOfWeek.add(const Duration(days: 6)); // Sunday
+
+  //   // * Check if the booking date is within this week
+  //   if (bookingDate.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
+  //       bookingDate.isBefore(endOfWeek.add(const Duration(days: 1)))) {
+  //     double dayOfWeek = _getDay(bookingDate);
+  //     weeklyData.updateBooking(dayOfWeek, booking.bookingStatus);
+  //   }
+  // }
+
   void _coordinates(Booking booking) {
     DateTime now = DateTime.now();
     DateTime bookingDate = DateTime.parse(booking.date);
 
-    // * Calculate the start and end of the current week
+    // * Calculate the start and end of the current week with Sunday as the start
     DateTime startOfWeek =
-        now.subtract(Duration(days: now.weekday - 1)); // Monday
-    DateTime endOfWeek = startOfWeek.add(const Duration(days: 6)); // Sunday
+        now.subtract(Duration(days: now.weekday % 7)); // Sunday
+    DateTime endOfWeek = startOfWeek.add(const Duration(days: 6)); // Saturday
 
     // * Check if the booking date is within this week
     if (bookingDate.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
