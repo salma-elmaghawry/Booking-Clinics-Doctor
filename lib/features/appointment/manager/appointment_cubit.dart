@@ -171,20 +171,20 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   // ! Get Keys of Chart from Bookings Date.
   static double _getDay(DateTime date) {
     switch (date.weekday) {
-      case 7:
-        return 0;
-      case 1:
+      case DateTime.sunday:
+        return 0; // Sunday
+      case DateTime.monday:
         return 1;
-      case 2:
+      case DateTime.tuesday:
         return 2;
-      case 3:
+      case DateTime.wednesday:
         return 3;
-      case 4:
+      case DateTime.thursday:
         return 4;
-      case 5:
+      case DateTime.friday:
         return 5;
-      case 6:
-        return 6;
+      case DateTime.saturday:
+        return 6; // Saturday
       default:
         return -1;
     }
@@ -196,14 +196,31 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   //   double dayOfWeek = _getDay(bookingDate);
   //   weeklyData.updateBooking(dayOfWeek, booking.bookingStatus);
   // }
+  // void _coordinates(Booking booking) {
+  //   DateTime now = DateTime.now();
+  //   DateTime bookingDate = DateTime.parse(booking.date);
+
+  //   // * Calculate the start and end of the current week
+  //   DateTime startOfWeek =
+  //       now.subtract(Duration(days: now.weekday - 1)); // Monday
+  //   DateTime endOfWeek = startOfWeek.add(const Duration(days: 6)); // Sunday
+
+  //   // * Check if the booking date is within this week
+  //   if (bookingDate.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
+  //       bookingDate.isBefore(endOfWeek.add(const Duration(days: 1)))) {
+  //     double dayOfWeek = _getDay(bookingDate);
+  //     weeklyData.updateBooking(dayOfWeek, booking.bookingStatus);
+  //   }
+  // }
+
   void _coordinates(Booking booking) {
     DateTime now = DateTime.now();
     DateTime bookingDate = DateTime.parse(booking.date);
 
-    // * Calculate the start and end of the current week
+    // * Calculate the start and end of the current week with Sunday as the start
     DateTime startOfWeek =
-        now.subtract(Duration(days: now.weekday - 1)); // Monday
-    DateTime endOfWeek = startOfWeek.add(const Duration(days: 6)); // Sunday
+        now.subtract(Duration(days: now.weekday % 7)); // Sunday
+    DateTime endOfWeek = startOfWeek.add(const Duration(days: 6)); // Saturday
 
     // * Check if the booking date is within this week
     if (bookingDate.isAfter(startOfWeek.subtract(const Duration(days: 1))) &&
