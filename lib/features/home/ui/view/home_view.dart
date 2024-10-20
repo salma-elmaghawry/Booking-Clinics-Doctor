@@ -46,6 +46,7 @@ class HomeView extends StatelessWidget {
               if (state is ProfileSuccess && state.model.imageUrl != null) {
                 return CircleAvatar(
                   radius: 8.w,
+                  backgroundColor: ConstColor.textBtn.color,
                   backgroundImage: CachedNetworkImageProvider(
                     state.model.imageUrl!,
                   ),
@@ -99,7 +100,10 @@ class HomeView extends StatelessWidget {
           weeklyData: context.read<AppointmentCubit>().weeklyData,
         ),
         SizedBox(height: 4.h),
-        const ListHeader(title: "Today's Bookings"),
+        ListHeader(
+          title: "Today's Bookings",
+          onPressed: () {},
+        ),
         const TodayBooking(),
       ],
     );

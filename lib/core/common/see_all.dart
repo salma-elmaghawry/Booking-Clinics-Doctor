@@ -1,11 +1,11 @@
 import 'package:booking_clinics_doctor/core/constant/const_color.dart';
-import 'package:booking_clinics_doctor/core/constant/const_string.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:flutter/material.dart';
 
 class ListHeader extends StatelessWidget {
   final String title;
-  const ListHeader({required this.title, super.key});
+  final void Function()? onPressed;
+  const ListHeader({required this.title, this.onPressed, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +19,7 @@ class ListHeader extends StatelessWidget {
           ),
         ),
         TextButton(
-          onPressed: () {
-            context.nav.pushNamed(Routes.seeAll);
-          },
+          onPressed: onPressed,
           child: const Text("See All"),
         ),
       ],
