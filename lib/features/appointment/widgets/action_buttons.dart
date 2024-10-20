@@ -28,7 +28,7 @@ class ActionButtons extends StatelessWidget {
         children: [
           Expanded(
             child: CustomButton(
-              text: 'Reject',
+              text: 'Deny',
               color: MyColors.gray,
               textSize: 14.5.sp,
               padding: const EdgeInsets.all(12),
@@ -49,7 +49,9 @@ class ActionButtons extends StatelessWidget {
                         : ConstColor.primary.color,
                   ),
                   onPressed: () async {
-                    context.read<AppointmentCubit>().reject(index: read.index!);
+                    context
+                        .read<AppointmentCubit>()
+                        .rejectBooking(index: read.index!);
                   },
                 );
                 context.read<AppointmentCubit>().index = bookingId;
@@ -64,7 +66,29 @@ class ActionButtons extends StatelessWidget {
               textSize: 14.5.sp,
               padding: const EdgeInsets.all(12),
               textColor: isDark ? MyColors.dark : Colors.white,
-              onTap: () {},
+              onTap: () {
+                final read = context.read<AppointmentCubit>();
+                showMsg(
+                  context,
+                  title: "Accept",
+                  msg:
+                      "Are you sure? Accept appointment for ${bookings[bookingId].name}",
+                  alertWidget: Icon(
+                    Iconsax.danger,
+                    size: 35.sp,
+                    color: MediaQuery.of(context).platformBrightness ==
+                            Brightness.light
+                        ? Colors.black
+                        : ConstColor.primary.color,
+                  ),
+                  onPressed: () async {
+                    context
+                        .read<AppointmentCubit>()
+                        .agreeBooking(index: read.index!);
+                  },
+                );
+                context.read<AppointmentCubit>().index = bookingId;
+              },
             ),
           ),
         ],

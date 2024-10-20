@@ -20,7 +20,33 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   AppointmentCubit(this._authService) : super(AppointmentLoading());
 
-  Future<void> reject({required int index}) async {
+  Future<void> agreeBooking({required int index}) async {
+    try {
+      emit(ActionClicked());
+      pending[index].isAccepted = 1;
+      // pending[index].bookingStatus = "Canceled";
+      // ! Update patient bookings
+      final patientRef = await _patientRef(pending[index].personId);
+      await patientRef.update({
+        'bookings': List<dynamic>.from(
+          _compineBookings.map((booking) => booking.toJson()),
+        ),
+      });
+      // ! Update doctor bookings
+      await _updateDoctorBookings(
+        index: index,
+        bookings: pending,
+        updatedBooking: pending[index],
+      );
+      debugPrint("Rejected Succesfully!");
+      emit(AppointmentSuccess());
+    } catch (e) {
+      debugPrint("$e");
+      debugPrint("Oops... Error in reject method!");
+    }
+  }
+
+  Future<void> rejectBooking({required int index}) async {
     try {
       emit(ActionClicked());
       pending[index].isAccepted = -1;
@@ -67,8 +93,8 @@ class AppointmentCubit extends Cubit<AppointmentState> {
           doctor.bookings[bookingIndex].isAccepted = updatedBooking.isAccepted;
           doctor.bookings[bookingIndex].bookingStatus =
               updatedBooking.bookingStatus;
-          doctor.bookings[bookingIndex].date = updatedBooking.date;
-          doctor.bookings[bookingIndex].time = updatedBooking.time;
+          // doctor.bookings[bookingIndex].date = updatedBooking.date;
+          // doctor.bookings[bookingIndex].time = updatedBooking.time;
           final ref = await _doctorRef;
           await ref.update({
             'bookings': List.from(
