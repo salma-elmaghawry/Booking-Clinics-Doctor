@@ -28,27 +28,28 @@ class ActionButtons extends StatelessWidget {
         children: [
           Expanded(
             child: CustomButton(
-              text: 'Cancel',
+              text: 'Reject',
               color: MyColors.gray,
               textSize: 14.5.sp,
               padding: const EdgeInsets.all(12),
               textColor: MyColors.dark2,
               onTap: () {
+                final read = context.read<AppointmentCubit>();
                 showMsg(
                   context,
                   title: "Cancel",
                   msg:
-                  "Are you sure? This appointment for Dr. ${bookings[bookingId].name} will be canceled!",
+                      "Are you sure? This appointment for ${bookings[bookingId].name} will be Rejected!",
                   alertWidget: Icon(
                     Iconsax.danger,
                     size: 35.sp,
                     color: MediaQuery.of(context).platformBrightness ==
-                        Brightness.light
+                            Brightness.light
                         ? Colors.black
                         : ConstColor.primary.color,
                   ),
                   onPressed: () async {
-                    // await read.cancelBooking(index: read.index!);
+                    context.read<AppointmentCubit>().reject(index: read.index!);
                   },
                 );
                 context.read<AppointmentCubit>().index = bookingId;
@@ -58,7 +59,7 @@ class ActionButtons extends StatelessWidget {
           SizedBox(width: 4.w),
           Expanded(
             child: CustomButton(
-              text: 'Reschedule',
+              text: 'Accept',
               color: isDark ? MyColors.primary : MyColors.dark,
               textSize: 14.5.sp,
               padding: const EdgeInsets.all(12),
@@ -118,5 +119,4 @@ class ActionButtons extends StatelessWidget {
       ),
     );
   }
-
 }

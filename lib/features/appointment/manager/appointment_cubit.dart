@@ -16,9 +16,71 @@ class AppointmentCubit extends Cubit<AppointmentState> {
   List<Booking> completed = [];
   List<Booking> compined = [];
   final FirebaseAuthService _authService;
-  WeeklyBookingData weeklyData = WeeklyBookingData();
+  // WeeklyBookingData weeklyData = WeeklyBookingData();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   AppointmentCubit(this._authService) : super(AppointmentLoading());
+
+  Future<void> reject({required int index}) async {
+    try {
+      emit(ActionClicked());
+      pending[index].isAccepted = -1;
+      pending[index].bookingStatus = "Canceled";
+      // ! Update patient bookings
+      final patientRef = await _patientRef(pending[index].personId);
+      await patientRef.update({
+        'bookings': List<dynamic>.from(
+          _compineBookings.map((booking) => booking.toJson()),
+        ),
+      });
+      // ! Update doctor bookings
+      await _updateDoctorBookings(
+        index: index,
+        bookings: pending,
+        updatedBooking: pending[index],
+      );
+      canceled.insert(0, pending[index]);
+      pending.removeAt(index);
+      debugPrint("Rejected Succesfully!");
+      emit(AppointmentSuccess());
+    } catch (e) {
+      debugPrint("$e");
+      debugPrint("Oops... Error in reject method!");
+    }
+  }
+
+  // ! Retrive, Search then Update doctor bookings in firestore
+  Future<void> _updateDoctorBookings({
+    required int index,
+    required Booking updatedBooking,
+    required List<Booking> bookings,
+  }) async {
+    try {
+      final snapshot = await _doctorDoc;
+      if (snapshot.exists) {
+        DoctorModel doctor = DoctorModel.fromJson(
+          snapshot.data() as Map<String, dynamic>,
+        );
+        final int bookingIndex = doctor.bookings.indexWhere(
+          (booking) => booking.bookingId == bookings[index].bookingId,
+        );
+        if (bookingIndex != -1) {
+          doctor.bookings[bookingIndex].isAccepted = updatedBooking.isAccepted;
+          doctor.bookings[bookingIndex].bookingStatus =
+              updatedBooking.bookingStatus;
+          doctor.bookings[bookingIndex].date = updatedBooking.date;
+          doctor.bookings[bookingIndex].time = updatedBooking.time;
+          final ref = await _doctorRef;
+          await ref.update({
+            'bookings': List.from(
+              doctor.bookings.map((booking) => booking.toJson()),
+            ),
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Error Update Doctor Bookings: $e");
+    }
+  }
 
   // ! Get bookings when open the page first time
   Future<void> fetchBookings() async {
@@ -82,28 +144,6 @@ class AppointmentCubit extends Cubit<AppointmentState> {
           'Bookings updated: Pending to Completed, & old bookings deleted.');
     }
   }
-  // Future<void> _updateStatus(DoctorModel doctor) async {
-  //   bool statusUpdated = false;
-  //   DateTime currentDate = DateTime.now();
-
-  //   for (int i = 0; i < doctor.bookings.length; i++) {
-  //     if (doctor.bookings[i].bookingStatus == 'Pending') {
-  //       DateTime bookingDate = DateTime.parse(doctor.bookings[i].date);
-  //       if (bookingDate.isBefore(currentDate)) {
-  //         doctor.bookings[i].bookingStatus = 'Completed';
-  //         statusUpdated = true;
-  //       }
-  //     }
-  //   }
-  //   if (statusUpdated) {
-  //     // ! Update doctor bookings
-  //     final ref = await _doctorRef;
-  //     List<Map<String, dynamic>> bookings =
-  //         doctor.bookings.map((e) => e.toJson()).toList();
-  //     await ref.update({'bookings': bookings});
-  //     debugPrint('Pending bookings updated to Completed');
-  //   }
-  // }
 
   // ! Get Keys of Chart from Bookings Date.
   static double _getDay(DateTime date) {
@@ -198,7 +238,8 @@ class AppointmentCubit extends Cubit<AppointmentState> {
           .get();
 
   // ! (2)
-  // Future<DocumentReference<Map<String, dynamic>>> _patientRef(
-  //         String patientId) async =>
-  //     _firestore.collection(ConstString.patientsCollection).doc(patientId);
+  Future<DocumentReference<Map<String, dynamic>>> _patientRef(
+    String patientId,
+  ) async =>
+      _firestore.collection(ConstString.patientsCollection).doc(patientId);
 }
