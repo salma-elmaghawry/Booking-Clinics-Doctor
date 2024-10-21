@@ -1,9 +1,8 @@
-import 'package:booking_clinics_doctor/core/constant/const_color.dart';
-
 import 'text_theme.dart';
 import 'custom_borders.dart';
 import 'package:sizer/sizer.dart';
 import 'package:flutter/material.dart';
+import 'package:booking_clinics_doctor/core/constant/const_color.dart';
 
 ThemeData lightTheme() {
   return ThemeData(
@@ -18,7 +17,7 @@ ThemeData lightTheme() {
         fontWeight: FontWeight.w500,
       ),
       centerTitle: true,
-      titleSpacing: 4.w,
+      titleSpacing: 0,
       scrolledUnderElevation: 0,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
@@ -29,36 +28,33 @@ ThemeData lightTheme() {
       ),
       iconTheme: IconThemeData(
         size: 20.sp,
-        color: ConstColor.icon.color,
+        color: ConstColor.textBtn.color,
       ),
     ),
     // ! _____ TabBar _____ ! //
     tabBarTheme: TabBarTheme(
       dividerHeight: 0.6,
-      labelColor: Colors.white,
+      labelColor: ConstColor.dark.color,
       dividerColor: Colors.transparent,
       indicatorSize: TabBarIndicatorSize.tab,
       unselectedLabelColor: ConstColor.textBtn.color,
       splashFactory: NoSplash.splashFactory,
-      labelStyle: TextStyle(
-        fontSize: 14.sp,
-        fontWeight: FontWeight.w500,
-      ),
+      labelStyle: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
       unselectedLabelStyle: TextStyle(fontSize: 14.sp),
       labelPadding: EdgeInsets.symmetric(horizontal: 0.5.w),
+      overlayColor: const WidgetStatePropertyAll(Colors.transparent),
       indicator: ShapeDecoration(
-        color: ConstColor.main.color,
         shape: StadiumBorder(
-          side: BorderSide(color: ConstColor.main.color),
+          side: BorderSide(color: ConstColor.dark.color, width: .5.w),
         ),
       ),
     ),
     // ! _____ Card Theme _____ ! //
-    cardTheme: CardTheme(
-      elevation: 4,
+    cardTheme: const CardTheme(
+      elevation: 2,
       margin: EdgeInsets.zero,
       clipBehavior: Clip.hardEdge,
-      color: ConstColor.secondary.color,
+      color: Colors.white,
     ),
     // ! _____ Text Theme _____ ! //
     textTheme: textTheme(),
@@ -69,16 +65,26 @@ ThemeData lightTheme() {
       textColor: Colors.black54,
       contentPadding: EdgeInsets.zero,
       iconColor: ConstColor.main.color,
+      titleTextStyle: TextStyle(
+        inherit: false,
+        fontSize: 15.5.sp,
+        fontWeight: FontWeight.w600,
+      ),
+      subtitleTextStyle: TextStyle(
+        inherit: false,
+        fontSize: 14.sp,
+      ),
       leadingAndTrailingTextStyle: const TextStyle(color: Colors.white),
     ),
     // ! _____ Icon _____ ! //
     iconTheme: IconThemeData(
       size: 20.sp,
-      color: ConstColor.dark.color,
+      color: ConstColor.textBtn.color,
     ),
     // ! _____ ElevatedButton _____ ! //
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
+        elevation: 0,
         foregroundColor: ConstColor.secondary.color,
         backgroundColor: ConstColor.dark.color,
         // shape: RoundedRectangleBorder(
@@ -141,11 +147,11 @@ ThemeData lightTheme() {
     ),
     // ! _____ Fixed Bottom Sheet _____ ! //
     bottomSheetTheme: BottomSheetThemeData(
-      constraints: BoxConstraints(
-        maxHeight: 35.h,
-        minHeight: 10.h,
+      showDragHandle: true,
+      constraints: const BoxConstraints(
         minWidth: double.infinity,
       ),
+      dragHandleColor: ConstColor.dark.color,
       backgroundColor: Colors.white,
     ),
     // ! _____ Vertical & Horizontal Divider Theme _____ ! //
@@ -156,7 +162,10 @@ ThemeData lightTheme() {
     // ! _____ Dialog Theme _____ ! //
     dialogTheme: DialogTheme(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(4.w),
+          topRight: Radius.circular(4.w),
+        ),
       ),
       backgroundColor: ConstColor.secondary.color,
     ),

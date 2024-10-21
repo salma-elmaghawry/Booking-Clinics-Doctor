@@ -9,6 +9,11 @@ final class MapSuccess extends MapState {}
 
 final class MapLoading extends MapState {}
 
+final class MarkerClicked extends MapState {
+  final DoctorModel model;
+  MarkerClicked(this.model);
+}
+
 final class MapFailure extends MapState {
   final String error;
   MapFailure(this.error);

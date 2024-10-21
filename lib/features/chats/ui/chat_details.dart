@@ -1,19 +1,18 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../cubit/chat_details_cubit.dart';
-import '../cubit/chat_details_state.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:sizer/sizer.dart';
+
+import '../../../core/constant/const_color.dart';
 import 'widgets/message_card.dart';
 
-class ChatDetailScreen extends StatelessWidget {
+class ChatDetailScreen extends StatefulWidget {
   final String chatId;
   final String chatPartnerName;
   final String chatPartnerId;
 
-  final TextEditingController _messageController = TextEditingController();
-
-  ChatDetailScreen({
+  const ChatDetailScreen({
     super.key,
     required this.chatId,
     required this.chatPartnerName,
@@ -21,55 +20,60 @@ class ChatDetailScreen extends StatelessWidget {
   });
 
   @override
+  State<ChatDetailScreen> createState() => _ChatDetailScreenState();
+}
+
+class _ChatDetailScreenState extends State<ChatDetailScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final TextEditingController _messageController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ChatDetailCubit(FirebaseFirestore.instance, chatId)..listenToMessages(),
-      child: Scaffold(
-        appBar: AppBar(title: Text(chatPartnerName)),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Column(
-            children: [
-              Expanded(child: _buildMessagesList()),
-              _buildMessageInput(context),
-            ],
-          ),
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.chatPartnerName)),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _firestore
+                    .collection('chats')
+                    .doc(widget.chatId)
+                    .collection('messages')
+                    .orderBy('timestamp', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return const Center(child: Text('No messages yet'));
+                  }
+
+                  return ListView(
+                    reverse: true,
+                    children: snapshot.data!.docs.map((doc) {
+                      var messageData = doc.data() as Map<String, dynamic>;
+                      String content = messageData['content'];
+                      String senderId = messageData['senderId'];
+                      bool isMe = senderId == _auth.currentUser!.uid;
+
+                      return MessageTile(content: content, isMe: isMe);
+                    }).toList(),
+                  );
+                },
+              ),
+            ),
+            _buildMessageInput(),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildMessagesList() {
-    return BlocBuilder<ChatDetailCubit, ChatDetailState>(
-      builder: (context, state) {
-        if (state is ChatDetailLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (state is ChatDetailError) {
-          return Center(child: Text(state.error));
-        }
-        if (state is ChatDetailLoaded) {
-          if (state.messages.isEmpty) {
-            return const Center(child: Text('No messages yet'));
-          }
-
-          return ListView(
-            reverse: true,
-            children: state.messages.map((messageData) {
-              String content = messageData['content'];
-              String senderId = messageData['senderId'];
-              bool isMe = senderId == FirebaseAuth.instance.currentUser!.uid;
-
-              return MessageTile(content: content, isMe: isMe);
-            }).toList(),
-          );
-        }
-        return const SizedBox();
-      },
-    );
-  }
-
-  Widget _buildMessageInput(BuildContext context) {
+  Widget _buildMessageInput() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -82,20 +86,176 @@ class ChatDetailScreen extends StatelessWidget {
               decoration: const InputDecoration(hintText: 'Type a message...'),
             ),
           ),
+          SizedBox(width: 2.w),
           IconButton(
+            iconSize: 3.5.h,
             icon: const Icon(Icons.send_rounded, color: Colors.blue),
-            onPressed: () {
-              String message = _messageController.text;
-              String userId = FirebaseAuth.instance.currentUser!.uid;
-              _messageController.clear();
-
-              // Send message using Cubit
-              context.read<ChatDetailCubit>().sendMessage(message, userId);
-            },
+            onPressed: _sendMessage,
           ),
         ],
       ),
     );
   }
+
+  void _sendMessage() async {
+    if (_messageController.text.isEmpty) return;
+
+    String message = _messageController.text;
+    String userId = _auth.currentUser!.uid;
+
+    await _firestore
+        .collection('chats')
+        .doc(widget.chatId)
+        .collection('messages')
+        .add({
+      'senderId': userId,
+      'content': message,
+      'timestamp': Timestamp.now(),
+    });
+
+    // Update last message and timestamp in chat document
+    await _firestore.collection('chats').doc(widget.chatId).update({
+      'lastMessage': message,
+      'lastMessageTime': Timestamp.now(),
+    });
+
+    _messageController.clear();
+  }
 }
 
+// class ChatDetailScreen extends StatefulWidget {
+//   final String chatId;
+//   final String chatPartnerName;
+//   final String chatPartnerId;
+//
+//   const ChatDetailScreen({
+//     super.key,
+//     required this.chatId,
+//     required this.chatPartnerName,
+//     required this.chatPartnerId,
+//   });
+//
+//   @override
+//   State<ChatDetailScreen> createState() => _ChatDetailScreenState();
+// }
+//
+// class _ChatDetailScreenState extends State<ChatDetailScreen> {
+//   final FirebaseAuth _auth = FirebaseAuth.instance;
+//   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+//   final TextEditingController _messageController = TextEditingController();
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(title: Text(widget.chatPartnerName)),
+//       body: Padding(
+//         padding: const EdgeInsets.symmetric(horizontal: 5),
+//         child: Column(
+//           children: [
+//             Expanded(
+//               child: StreamBuilder<QuerySnapshot>(
+//                 stream: _firestore
+//                     .collection('chats')
+//                     .doc(widget.chatId)
+//                     .collection('messages')
+//                     .orderBy('timestamp', descending: true)
+//                     .snapshots(),
+//                 builder: (context, snapshot) {
+//                   if (snapshot.connectionState == ConnectionState.waiting) {
+//                     return const Center(child: CircularProgressIndicator());
+//                   }
+//                   if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+//                     return const Center(child: Text('No messages yet'));
+//                   }
+//
+//                   return ListView(
+//                     reverse: true,
+//                     children: snapshot.data!.docs.map((doc) {
+//                       var messageData = doc.data() as Map<String, dynamic>;
+//                       String content = messageData['content'];
+//                       String senderId = messageData['senderId'];
+//
+//                       bool isMe = senderId == _auth.currentUser!.uid;
+//
+//                       return ListTile(
+//                         title: Align(
+//                           alignment: isMe
+//                               ? Alignment.centerRight
+//                               : Alignment.centerLeft,
+//                           child: Container(
+//                             width: 80.w,
+//                             padding: const EdgeInsets.all(10),
+//                             decoration: BoxDecoration(
+//                               color: isMe ? Colors.blue : Colors.grey[200],
+//                               borderRadius: BorderRadius.circular(10),
+//                             ),
+//                             child: Text(
+//                               content,
+//                               style: TextStyle(
+//                                 color: isMe ? Colors.white : Colors.black,
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+//                       );
+//                     }).toList(),
+//                   );
+//                 },
+//               ),
+//             ),
+//             _buildMessageInput(),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildMessageInput() {
+//     return Padding(
+//       padding: const EdgeInsets.all(8.0),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//         children: [
+//           Expanded(
+//             flex: 6,
+//             child: TextField(
+//               controller: _messageController,
+//               decoration: const InputDecoration(hintText: 'Type a message...'),
+//             ),
+//           ),
+//           SizedBox(width: 2.w),
+//           IconButton(
+//             iconSize: 3.5.h,
+//             icon: const Icon(Icons.send_rounded, color: MyColors.blue),
+//             onPressed: _sendMessage,
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   void _sendMessage() async {
+//     if (_messageController.text.isEmpty) return;
+//
+//     String message = _messageController.text;
+//     String userId = _auth.currentUser!.uid;
+//
+//     await _firestore
+//         .collection('chats')
+//         .doc(widget.chatId)
+//         .collection('messages')
+//         .add({
+//       'senderId': userId,
+//       'content': message,
+//       'timestamp': Timestamp.now(),
+//     });
+//
+//     // Update last message and timestamp in chat document
+//     await _firestore.collection('chats').doc(widget.chatId).update({
+//       'lastMessage': message,
+//       'lastMessageTime': Timestamp.now(),
+//     });
+//
+//     _messageController.clear();
+//   }
+// }

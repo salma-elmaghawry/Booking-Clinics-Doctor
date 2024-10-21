@@ -1,4 +1,8 @@
+import 'package:booking_clinics_doctor/core/constant/extension.dart';
+import 'package:booking_clinics_doctor/features/home/ui/widget/list_item.dart';
 import 'package:sizer/sizer.dart';
+import '../../../../core/constant/const_string.dart';
+import '../../data/model/location_model.dart';
 import '../manager/map_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,8 +37,9 @@ class _MapViewState extends State<MapView> {
             GoogleMap(
               style: style,
               markers: mapCubit.markers,
-              onTap: (val) async {
-                await mapCubit.getDoctors();
+              onTap: (val) {
+                if (state is MapLoading) return;
+                if (state is MarkerClicked) mapCubit.emitInitial();
               },
               onMapCreated: (controller) async {
                 // style = await mapCubit.setupMapStyle(context);
@@ -56,53 +61,65 @@ class _MapViewState extends State<MapView> {
               right: 4.w,
               child: MapInput(
                 onSelectPlace: (details) async {
-                  mapCubit
-                    ..places.clear()
-                    ..sessionToken = null
-                    ..textController.clear();
-                  List<LatLng> points = await mapCubit.computeRoutes(details);
-                  await mapCubit.displayRoutes(points);
+                  await _computeRoute(
+                    mapCubit,
+                    LocationModel(
+                      lat: details!.geometry!.location!.lat!,
+                      lng: details.geometry!.location!.lng!,
+                    ),
+                  );
                   // await mapCubit.trackLocation();
                 },
               ),
             ),
+            if (state is MarkerClicked)
+              Positioned(
+                left: 4.w,
+                right: 4.w,
+                bottom: 8.h,
+                height: 30.h,
+                child: GestureDetector(
+                  onTap: () {
+                    context.nav.pushNamed(
+                      Routes.doctorDetailsRoute,
+                      arguments: {
+                        "doctorId": state.model.id,
+                        "patientName": state.model.name,
+                      },
+                    );
+                  },
+                  child: Card(
+                    child: ListItem(
+                      doctor: state.model,
+                      computeRoute: () async => await _computeRoute(
+                        mapCubit,
+                        LocationModel(
+                          lat: state.model.location["lat"],
+                          lng: state.model.location["lng"],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            if (state is MapLoading)
+              const Center(child: CircularProgressIndicator()),
           ],
         );
       },
     );
   }
+
+  Future<void> _computeRoute(
+    MapCubit mapCubit,
+    LocationModel? destination,
+  ) async {
+    if (destination == null) return;
+    mapCubit
+      ..places.clear()
+      ..sessionToken = null
+      ..textController.clear();
+    List<LatLng> points = await mapCubit.computeRoutes(destination);
+    await mapCubit.displayRoutes(points);
+  }
 }
-
-        // bottomSheet: MapsButtomSheet(
-        //   controller: mapCubit.textController,
-        //   onSelectPlace: (details) async {
-        //     mapCubit
-        //       ..places.clear()
-        //       ..sessionToken = null
-        //       ..textController.clear();
-        //     List<LatLng> points = await mapCubit.computeRoutes(details);
-        //     await mapCubit.displayRoutes(points);
-        //   },
-        // ),
-
-/*
-BlocBuilder<HomeCubit, HomeState>(
-        builder: (_, state) {
-          if (state is HomeSuccessState) {
-            return GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-              ),
-              itemCount: state.model.data!.serviceType!.length,
-              itemBuilder: (_, index) {
-                return Text(state.model.data!.serviceType![index].type);
-              },
-            );
-          } else if (state is HomeFailureState) {
-            return Center(child: Text(state.error));
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      )
-*/

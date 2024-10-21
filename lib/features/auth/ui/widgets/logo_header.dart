@@ -1,3 +1,4 @@
+import 'package:booking_clinics_doctor/core/constant/const_color.dart';
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
@@ -21,12 +22,15 @@ class LogoHeader extends StatelessWidget {
           children: [
             Text(
               "Health",
-              style: TextStyle(fontSize: 20.sp, color: const Color(0xff6B7280)),
+              style: TextStyle(
+                fontSize: 20.sp,
+                color: ConstColor.icon.color,
+              ),
             ),
             Text("Pal", style: TextStyle(fontSize: 20.sp)),
           ],
         ),
-        SizedBox(height: 3.h),
+        SizedBox(height: 2.h),
       ],
     );
   }

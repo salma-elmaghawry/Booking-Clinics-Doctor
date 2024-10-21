@@ -14,9 +14,6 @@ import '../../features/booking/cubit/doc_details_cubit.dart';
 import '../../features/booking/ui/doctor_details.dart';
 import '../../features/chats/cubit/chat_details_cubit.dart';
 import '../../features/home/ui/view/nav_view.dart';
-import '../../features/see_all/data/see_all_repo_impl.dart';
-import '../../features/see_all/ui/manager/see_all_cubit.dart';
-import '../../features/see_all/ui/view/see_all_view.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -58,13 +55,6 @@ class AppRouter {
               chatPartnerName: chatModel.chatPartnerName,
               chatPartnerId: chatModel.chatPartnerId,
             ),
-          ),
-        );
-      case Routes.seeAll:
-        return MaterialPageRoute(
-          builder: (_) => BlocProvider<SeeAllCubit>(
-            create: (_) => SeeAllCubit(getIt.get<SeeAllRepoImpl>()),
-            child: SeeAllView(firstIndex: settings.arguments as int?),
           ),
         );
       default:

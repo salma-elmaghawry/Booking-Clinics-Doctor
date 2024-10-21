@@ -64,7 +64,7 @@ void showMsg(
                       )),
                     ),
                     child: const Text(
-                      "Yes, Cancel",
+                      "Yes, Sure",
                       textAlign: TextAlign.center,
                     ),
                   ),

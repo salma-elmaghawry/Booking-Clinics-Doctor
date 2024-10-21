@@ -1,4 +1,5 @@
 class Booking {
+  int isAccepted; // -1, 0, 1
   String id,
       name,
       date,
@@ -7,6 +8,7 @@ class Booking {
       imageUrl,
       specialty,
       personId,
+      bookingId,
       bookingStatus;
 
   Booking({
@@ -18,6 +20,8 @@ class Booking {
     required this.imageUrl,
     required this.specialty,
     required this.personId,
+    required this.bookingId,
+    required this.isAccepted,
     required this.bookingStatus,
   });
 
@@ -31,6 +35,8 @@ class Booking {
       imageUrl: json['image_url'],
       specialty: json['specialty'],
       personId: json["person_id"],
+      bookingId: json["booking_id"],
+      isAccepted: json["is_accepted"],
       bookingStatus: json["booking_status"],
     );
   }
@@ -45,6 +51,8 @@ class Booking {
       'image_url': imageUrl,
       'specialty': specialty,
       'person_id': personId,
+      'booking_id': bookingId,
+      'is_accepted': isAccepted,
       'booking_status': bookingStatus,
     };
   }

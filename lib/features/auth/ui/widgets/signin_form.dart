@@ -1,5 +1,6 @@
 import 'package:booking_clinics_doctor/core/common/input.dart';
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
+import 'package:booking_clinics_doctor/core/helper/service_locator.dart';
 import 'package:booking_clinics_doctor/data/models/doctor_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,9 +22,14 @@ class _SigninFormState extends State<SigninForm> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   GlobalKey<FormState> formState = GlobalKey();
-
   bool _isLoading = false;
-  final AuthenticationServices _authServices = AuthenticationServices();
+
+  @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +48,14 @@ class _SigninFormState extends State<SigninForm> {
             prefix: Iconsax.lock,
             hint: "Password",
           ),
-          SizedBox(height: 3.h),
+          Align(
+            alignment: const Alignment(1, 0),
+            child: TextButton(
+              onPressed: () => context.nav.pushNamed(Routes.forgetPassword),
+              child: const Text("Forgot password?"),
+            ),
+          ),
+          SizedBox(height: 6.h),
           _isLoading
               ? const CircularProgressIndicator()
               : CustomElevatedButton(
@@ -58,18 +71,22 @@ class _SigninFormState extends State<SigninForm> {
     if (formState.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      User? user = await _authServices.loginWithEmailAndPassword(
-        emailController.text.trim(),
-        passwordController.text.trim(),
-        context,
-      );
+      User? user =
+          await getIt.get<AuthenticationServices>().loginWithEmailAndPassword(
+                emailController.text.trim(),
+                passwordController.text.trim(),
+                context,
+              );
       setState(() => _isLoading = false);
 
       if (user != null && user.emailVerified) {
-        DoctorModel? doctor = await _authServices.getDoctorById(context, user.uid);
+        DoctorModel? doctor = await getIt
+            .get<AuthenticationServices>()
+            .getDoctorById(context, user.uid);
         if (doctor != null) {
           await SharedPrefServices().saveDoctor(doctor);
-          context.nav.pushNamedAndRemoveUntil(Routes.navRoute, (route) => false);
+          context.nav
+              .pushNamedAndRemoveUntil(Routes.navRoute, (route) => false);
         }
       } else {
         setState(() => _isLoading = false);

@@ -20,13 +20,39 @@ class BookingCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(booking.time, style: context.semi14),
-                SizedBox(width: 4.w),
-                Text(booking.date, style: context.semi14),
-              ],
+            IntrinsicHeight(
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 2.w,
+                      vertical: 0.5.h,
+                    ),
+                    decoration: BoxDecoration(
+                        gradient: booking.isAccepted < 0
+                            ? orangeToRedGradient
+                            : booking.isAccepted > 0
+                                ? blueToPurpleGradient
+                                : greenToTealGradient,
+                        borderRadius: BorderRadius.circular(4.w)),
+                    child: Text(
+                      booking.isAccepted < 0
+                          ? "rejected"
+                          : booking.isAccepted > 0
+                              ? "accepted"
+                              : "in progress",
+                      style: context.regular14?.copyWith(
+                        // height: 0,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(booking.time, style: context.semi14),
+                  VerticalDivider(width: 4.w),
+                  Text(booking.date, style: context.semi14),
+                ],
+              ),
             ),
             Divider(height: 4.h),
             Row(
@@ -36,7 +62,7 @@ class BookingCard extends StatelessWidget {
                   fallbackAsset: MyImages.doctorAvatar,
                   height: 35.w,
                   width: 35.w,
-                  borderRadius: 3.w,
+                  borderRadius: 50.w,
                 ),
                 SizedBox(width: 1.w),
                 Expanded(
@@ -68,7 +94,7 @@ class BookingCard extends StatelessWidget {
                               child: Text(
                                 booking.address,
                                 style:
-                                const TextStyle(color: MyColors.softGray),
+                                    const TextStyle(color: MyColors.softGray),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),

@@ -57,7 +57,8 @@ class Input extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         label: label != null ? Text(label!) : null,
-        isDense: label != null ? false : true,
+        // isDense: label != null ? false : true,
+        isDense: isDense,
         prefixIconConstraints: BoxConstraints(maxWidth: 20.w),
         prefixIcon: prefix != null
             ? Padding(

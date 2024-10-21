@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:math' as math;
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
@@ -33,7 +33,6 @@ class MapCubit extends Cubit<MapState> {
   final LocationRepo locationRepo;
 
   Timer? debounce;
-  // LatLng? _latLng;
   String? sessionToken;
   late final Uuid _uuid;
   bool _isFirstCall = true;
@@ -43,25 +42,30 @@ class MapCubit extends Cubit<MapState> {
   final List<PlaceAutocompleteModel> places = [];
   late final TextEditingController textController;
 
+  void emitInitial() => emit(MapInitial());
+
   Future<void> getDoctors() async {
     try {
       BitmapDescriptor icon = await _setupCustomMarker();
       final QuerySnapshot query =
           await FirebaseFirestore.instance.collection('doctors').get();
       final List<DoctorModel> doctors = query.docs.map((doc) {
-        print(doc.id);
+        debugPrint(doc.id);
         return DoctorModel.fromJson(doc.data() as Map<String, dynamic>);
       }).toList();
-      print("Hello");
+      debugPrint("Hello");
       if (doctors.isNotEmpty) {
         for (int i = 0; i < doctors.length; i++) {
           markers.add(
             Marker(
+              onTap: () {
+                emit(MarkerClicked(doctors[i]));
+              },
               icon: icon,
               markerId: MarkerId(doctors[i].id),
               position: LatLng(
-                doctors[i].location["latitude"],
-                doctors[i].location["longitude"],
+                doctors[i].location["lat"],
+                doctors[i].location["lng"],
               ),
               infoWindow: InfoWindow(title: doctors[i].name),
             ),
@@ -69,7 +73,7 @@ class MapCubit extends Cubit<MapState> {
         }
       }
     } catch (e) {
-      print(e);
+      debugPrint("$e");
       emit(MapFailure("fetch doctors failed"));
     }
   }
@@ -123,6 +127,7 @@ class MapCubit extends Cubit<MapState> {
         },
       );
     } else {
+      debugPrint("Allow permissions to use google maps.");
       emit(MapFailure("Allow permissions to use google maps."));
     }
   }
@@ -161,7 +166,7 @@ class MapCubit extends Cubit<MapState> {
   }
 
   // ! Feature(2-2): onClick response coming from [predectPlaces].
-  Future<List<LatLng>> computeRoutes(PlaceDetailsModel? details) async {
+  Future<List<LatLng>> computeRoutes(LocationModel destination) async {
     // print(markers.first.position.latitude);
     emit(MapLoading());
     final result = await routesRepo.computeRoutes(
@@ -169,14 +174,14 @@ class MapCubit extends Cubit<MapState> {
         lat: markers.first.position.latitude,
         lng: markers.first.position.longitude,
       ),
-      destination: LocationModel(
-        lat: details!.geometry!.location!.lat!,
-        lng: details.geometry!.location!.lng!,
-      ),
+      destination: destination,
     );
     List<LatLng> routes = [];
     result.fold(
-      (failure) => emit(MapFailure(failure.ex)),
+      (failure) {
+        emit(MapFailure(failure.ex));
+        debugPrint(failure.ex);
+      },
       (success) {
         routes = _decodeLatLng(success)
             .map((e) => LatLng(e.latitude, e.longitude))
@@ -204,7 +209,10 @@ class MapCubit extends Cubit<MapState> {
     final result = await mapRepo.placeDetails(placeId: placeId);
     PlaceDetailsModel? placeDetailsModel;
     result.fold(
-      (failure) => emit(MapFailure(failure.ex)),
+      (failure) {
+        emit(MapFailure(failure.ex));
+        debugPrint(failure.ex);
+      },
       (success) {
         placeDetailsModel = success;
         emit(MapSuccess());
@@ -218,6 +226,8 @@ class MapCubit extends Cubit<MapState> {
     final Polyline route = Polyline(
       width: 3,
       points: points,
+      endCap: Cap.roundCap,
+      startCap: Cap.roundCap,
       color: Colors.blue,
       polylineId: const PolylineId("route"),
     );
@@ -232,17 +242,37 @@ class MapCubit extends Cubit<MapState> {
     }
   }
 
+  // double calculateBearing(LatLng start, LatLng end) {
+  //   double lat1 = start.latitude * math.pi / 180;
+  //   double lon1 = start.longitude * math.pi / 180;
+  //   double lat2 = end.latitude * math.pi / 180;
+  //   double lon2 = end.longitude * math.pi / 180;
+
+  //   double dLon = lon2 - lon1;
+
+  //   double y = math.sin(dLon) * math.cos(lat2);
+  //   double x = math.cos(lat1) * math.sin(lat2) -
+  //       math.sin(lat1) * math.cos(lat2) * math.cos(dLon);
+
+  //   double bearing = math.atan2(y, x);
+
+  //   return (bearing * 180 / math.pi + 360) % 360;
+  // }
+
   // ! Feature(2-6): Update camera bounds after searching in place.
   LatLngBounds _latLngBounds(List<LatLng> points) {
     double southLat = points.first.latitude;
     double southLng = points.first.longitude;
+
     double northLat = points.first.latitude;
     double northLng = points.first.longitude;
+
     for (LatLng point in points) {
-      southLat = min(southLat, point.latitude);
-      southLng = min(southLng, point.longitude);
-      northLat = min(northLat, point.latitude);
-      northLat = min(northLat, point.longitude);
+      southLat = math.min(southLat, point.latitude);
+      southLng = math.min(southLng, point.longitude);
+      
+      northLat = math.min(northLat, point.latitude);
+      northLat = math.min(northLat, point.longitude);
     }
     return LatLngBounds(
       southwest: LatLng(southLat, southLng),

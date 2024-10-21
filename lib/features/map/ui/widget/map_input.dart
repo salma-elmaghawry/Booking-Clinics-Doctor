@@ -1,9 +1,10 @@
+import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:sizer/sizer.dart';
-
 import '../../../../core/common/input.dart';
+import '../../../../core/constant/const_color.dart';
 import '../../data/model/place_details_model/place_details_model.dart';
 import '../manager/map_cubit.dart';
 
@@ -26,15 +27,14 @@ class MapInput extends StatelessWidget {
         Container(
           decoration: const BoxDecoration(
             boxShadow: [
-              // BoxShadow(
-              //   color: Colors.black12,
-              //   offset: Offset(0, 4),
-              //   blurRadius: 4,
-              // ),
+              BoxShadow(
+                color: Colors.black12,
+                offset: Offset(0, 4),
+                blurRadius: 4,
+              ),
             ],
           ),
           child: Input(
-            fillColor: Colors.white,
             hint: "Search Doctor, Hospital",
             controller: mapCubit.textController,
             prefix: Iconsax.search_normal,
@@ -47,7 +47,9 @@ class MapInput extends StatelessWidget {
             minWidth: double.infinity,
           ),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.query.platformBrightness == Brightness.light
+                ? ConstColor.secondary.color
+                : ConstColor.iconDark.color,
             borderRadius: BorderRadius.circular(3.5.w),
           ),
           margin: EdgeInsets.only(top: 1.h),
@@ -59,8 +61,14 @@ class MapInput extends StatelessWidget {
             itemBuilder: (_, index) {
               return ListTile(
                 onTap: () => _onClick(context, index),
-                title: Text(mapCubit.places[index].terms?.first.value ?? ""),
-                subtitle: Text(mapCubit.places[index].description ?? ""),
+                title: Text(
+                  mapCubit.places[index].terms?.first.value ?? "",
+                  style: context.semi16,
+                ),
+                subtitle: Text(
+                  mapCubit.places[index].description ?? "",
+                  style: context.regular14,
+                ),
               );
             },
             separatorBuilder: (_, index) => const Divider(
