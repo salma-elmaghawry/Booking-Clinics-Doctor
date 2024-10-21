@@ -1,15 +1,10 @@
 import 'package:booking_clinics_doctor/core/constant/extension.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
-import '../../../core/common/custom_button.dart';
 import '../../../core/common/custom_image.dart';
 import '../../../core/common/input.dart';
-import '../../../core/common/loading_indicator.dart';
-import '../../../core/constant/const_color.dart';
 import '../../../data/models/booking.dart';
-import '../manager/appointment_cubit.dart';
 
 class ReviewSheet extends StatefulWidget {
   final Booking booking;
@@ -65,8 +60,7 @@ class _ReviewSheetState extends State<ReviewSheet>
 
   @override
   Widget build(BuildContext context) {
-    print(widget.booking.imageUrl);
-    final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    debugPrint(widget.booking.imageUrl);
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
         6.w,
