@@ -31,4 +31,22 @@ class ChatCubit extends Cubit<ChatState> {
       emit(ChatError(error: error.toString()));
     });
   }
+
+  Future<Map<String, dynamic>?> getUserData(String userId) async {
+    try {
+      DocumentSnapshot userSnapshot = await _firestore
+          .collection('patients')
+          .doc(userId)
+          .get();
+
+      if (userSnapshot.exists) {
+        return userSnapshot.data() as Map<String, dynamic>?;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      emit(ChatError(error: error.toString()));
+      return null;
+    }
+  }
 }

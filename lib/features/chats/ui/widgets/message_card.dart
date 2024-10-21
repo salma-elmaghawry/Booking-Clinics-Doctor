@@ -5,11 +5,7 @@ class MessageTile extends StatelessWidget {
   final String content;
   final bool isMe;
 
-  const MessageTile({
-    super.key,
-    required this.content,
-    required this.isMe,
-  });
+  const MessageTile({super.key, required this.content, required this.isMe});
 
   @override
   Widget build(BuildContext context) {
