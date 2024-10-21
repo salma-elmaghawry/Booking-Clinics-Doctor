@@ -51,22 +51,18 @@ class ChatListScreen extends StatelessWidget {
 
                     String chatPartnerId = participants.firstWhere((id) => id != currentUserId);
 
-                    return FutureBuilder<DocumentSnapshot>(
-                      future: FirebaseFirestore.instance
-                          .collection('doctors')
-                          .doc(chatPartnerId)
-                          .get(),
+                    return FutureBuilder<Map<String, dynamic>?>(
+                      future: context.read<ChatCubit>().getUserData(chatPartnerId),
                       builder: (context, userSnapshot) {
                         if (userSnapshot.connectionState == ConnectionState.waiting) {
                           return const ListTile(title: Text('Loading...'));
                         }
 
-                        if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
+                        if (!userSnapshot.hasData || userSnapshot.data == null) {
                           return const ListTile(title: Text('User not found'));
                         }
 
-                        var userData =
-                            userSnapshot.data!.data() as Map<String, dynamic>;
+                        var userData = userSnapshot.data!;
                         String chatPartnerName = userData['name'] ?? 'Unknown';
 
                         return ChatCard(

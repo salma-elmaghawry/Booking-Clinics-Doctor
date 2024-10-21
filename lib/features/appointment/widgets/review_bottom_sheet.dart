@@ -60,7 +60,7 @@ class _ReviewSheetState extends State<ReviewSheet>
 
   @override
   Widget build(BuildContext context) {
-    // final isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+    debugPrint(widget.booking.imageUrl);
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
         6.w,
